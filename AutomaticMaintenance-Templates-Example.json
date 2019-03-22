@@ -1,0 +1,41 @@
+[
+    {
+        "Name": "Example-Template",
+        "Properties": {
+            "PreClearCommands": "Example-PreClear.ps1",
+            "PostClearCommands": "Example-PostClear.ps1",
+            "PreRestoreCommands": "Example-PreRestore.ps1",
+            "PostRestoreCommands": "Example-PostRestore.ps1",
+            "TestCommands": "Example-Test.ps1",
+            "FinallyCommands": "Example-Finally.ps1",
+            "UpdateInstallFilter": "$_.Title -notlike '*Preview*' -and $_.Title -notlike '*Silverlight*' -and $_.Title -notlike '*Security Only*'"
+        }
+    },
+    {
+        "Name": "Example-Template2",
+        "Include": [
+            {
+                "Priority": 1,
+                "Name": "Example-Template"
+            }
+        ],
+        "Properties": {
+            "Type": "HV-SCVMM",
+            "VMMServerName": "SRVVMM01",
+            "Workload": [
+                {
+                    "Path": "C:\\VMs",
+                    "DestinationName": "SRV05",
+                    "DestinationPath": "D:\\VMs",
+                    "Filter": "$_.Name -notlike '*-DontMove'"
+                },
+                {
+                    "Path": "E:\\VMs",
+                    "DestinationName": "SRV05",
+                    "DestinationPath": "E:\\VMs",
+                    "Filter": "$_.Name -notlike '*-DontMove'"
+                }
+            ]
+        }
+    }
+]

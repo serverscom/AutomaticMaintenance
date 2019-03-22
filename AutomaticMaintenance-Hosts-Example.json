@@ -1,0 +1,49 @@
+[
+    {
+        "Name": "SRV01",
+        "Template": "Example-Template"
+    },
+    {
+        "Name": "SRV02",
+        "Template": "Example-Template",
+        "MyCustomAttribute": "CustomValue2"
+    },
+    {
+        "Name": "SRV03",
+        "Template": "Example-Template2"
+    },
+    {
+        "Name": "SRV04",
+        "Template": "Example-Template2",
+        "MyCustomAttribute": "CustomValue1",
+        "PostRestoreCommands": "",
+        "Workload": [
+            {
+                "Path": "D:\\VMs",
+                "DestinationName": "SRV05",
+                "DestinationPath": "E:\\VMs",
+                "Filter": "$_.Name -notlike '*-DontMove'"
+            }
+        ]
+    },
+    {
+        "Name": "SRV05",
+        "Type": "HV-SCVMM",
+        "VMMServerName": "SRVVMM01",
+        "MyCustomAttribute": "CustomValue1",
+        "Workload": [
+            {
+                "Path": "D:\\VMs",
+                "DestinationName": "SRV03",
+                "DestinationPath": "C:\\VMs",
+                "Filter": "$_.Name -notlike '*-DontMove'"
+            },
+            {
+                "Path": "E:\\VMs",
+                "DestinationName": "SRV03",
+                "DestinationPath": "E:\\VMs",
+                "Filter": "$_.Name -notlike '*-DontMove'"
+            }
+        ]
+    }
+]
