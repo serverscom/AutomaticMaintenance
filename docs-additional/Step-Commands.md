@@ -1,4 +1,8 @@
-# Plug-ins (Step Commands)
+# Step Commands (Plug-ins))
+Step commands are scripts which can be run at steps executed throughout the maintenance process, as defined below. Usually you would like to create a PowerShell script, put it into the `ScriptBlocks` folder, then insert the name of the script into an appropriate attribute in the main configuration file or in the templates file (or in both, if your config requires so - it's completely up to you).
+
+Step commands are good to tell other systems that a host is about to reboot, but you of course can find them useful in other ways as well.
+
 There are several steps defined (in the order of execute):
 * Pre-Clear (PreClearCommands) - this step executes before workload is removed from the host. It's a good step to execute a command which will prevent further workload placing on the host.
 * Post-Clear (PostClearCommands) - this step executes right after workload is removed from the host. At this step you can disable monitoring, for example.

@@ -24,7 +24,7 @@ The `Include` attribute defines a collection of objects. Each of those objects m
 
 ## Attributes
 * Name - The name of a host where you want to install updates automatically. Should be unique.
-* Type - A type of a host. Currently, acceptable values are "HV-SCVMM", "Generic".
+* Type - A type of a host. Currently, acceptable values are `HV-SCVMM`, `Generic`.
 * UpdateInstallFilter - A filter which is used to filter out unneeded updates, like preview versions etc.
 
 The following set of attributes describes step commands (plug-ins):
@@ -35,7 +35,7 @@ The following set of attributes describes step commands (plug-ins):
 * TestCommands
 * FinallyCommands
 
-Each attribute is usually a name of a PowerShell script, located in a "ScriptBlocks" folder in the module's folder. See more about these commands [here](Step-Commands.md)
+Each attribute is usually a name of a PowerShell script, located in a `ScriptBlocks` folder in the module's folder. See more about these commands [here](Step-Commands.md)
 
 ### Workload-specific attributes
 #### HV-SCVMM
