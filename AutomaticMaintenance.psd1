@@ -6,6 +6,7 @@
     CompanyName       = 'Fozzy Inc.'
     Copyright         = '(c) 2018 Fozzy Inc. All rights reserved.'
     PowerShellVersion = '3.0'
+    Description       = 'Helps IT engineers to establish a continuous update process in large intertangled infrastructures.'
     RequiredModules   = @(
         'PendingReboot'
         'ResourceLocker'
@@ -19,4 +20,12 @@
     )
     CmdletsToExport   = @()
     AliasesToExport   = @()
+    PrivateData       = @{
+        PSData = @{
+            Tags         = @()
+            LicenseUri   = 'https://github.com/FozzyHosting/AutomaticMaintenance/blob/master/LICENSE'
+            ProjectUri   = 'https://github.com/FozzyHosting/AutomaticMaintenance/'
+            ReleaseNotes = ''
+        }  
+    }
 }
