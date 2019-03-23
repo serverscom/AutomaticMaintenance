@@ -34,7 +34,7 @@ function Invoke-InfrastructureMaintenance {
                 Write-Debug -Message 'if ($LogErrorFileContent)'
                 if ($LogErrorFileContent) {
                     $Message = ('Error log file {0} is not empty. To ignore this, set the module configuration variable $ModuleWideFailOnPreviousFailure to $false.' -f $LogErrorFilePath)
-                    PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.ApplicationException' -ArgumentList $Message), 'FileIsNotEmpty', [System.Management.Automation.ErrorCategory]::InvalidData, $null)))
+                    $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.ApplicationException' -ArgumentList $Message), 'FileIsNotEmpty', [System.Management.Automation.ErrorCategory]::InvalidData, $null)))
                 }
             }
         }
