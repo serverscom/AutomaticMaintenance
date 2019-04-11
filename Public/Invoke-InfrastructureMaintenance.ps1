@@ -52,40 +52,70 @@ function Invoke-InfrastructureMaintenance {
             }
         }
 
-        Write-Debug -Message '$List = Get-ComputerList'
-        $List = Get-ComputerList
-        Write-Debug -Message ('$List: ''{0}''' -f [string]$List)
+        Write-Debug -Message '[System.Collections.ArrayList]$ProcessedComputers = @()'
+        [System.Collections.ArrayList]$ProcessedComputers = @()
 
-        Write-Debug -Message 'if ($List)'
-        if ($List) {
-            foreach ($ComputerName in $List) {
-                Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
-                Write-Debug -Message ('$LogFilePath = ''{0}'' -f ''{1}''' -f $LogFilePathTemplate, $ComputerName)
-                $LogFilePath = $LogFilePathTemplate -f $ComputerName
-                Write-Debug -Message ('$LogFilePath = ''{0}''' -f $LogFilePath)
+        Write-Debug -Message 'do while ($UnprocessedComputers)'
+        do {
+            Write-Debug -Message '[System.Collections.ArrayList]$UnprocessedComputers = @()'
+            [System.Collections.ArrayList]$UnprocessedComputers = @()
 
-                Write-Debug -Message ('$LogScriptBlock = [scriptblock]::Create((''Write-SimpleTextLog -Path ''''{{0}}'''' -MutexName ''''{{1}}'''''' -f {0}, {1}))' -f $LogFilePath, $LogMutexName)
-                $LogScriptBlock = [scriptblock]::Create(('Write-SimpleTextLog -Path ''{0}'' -MutexName ''{1}''' -f $LogFilePath, $LogMutexName))
-                Write-Debug -Message ('$LogScriptBlock = {0}' -f [string]$LogScriptBlock)
+            Write-Debug -Message '$List = Get-ComputerList'
+            $List = Get-ComputerList
+            Write-Debug -Message ('$List: ''{0}''' -f [string]$List)
 
-                Write-Debug -Message ('$DebugLog: ''{0}''' -f [string]$DebugLog)
-                Write-Debug -Message 'if ($DebugLog)'
-                if ($DebugLog) {
-                    Write-Debug -Message ('$CurrentDebugPreference = ''{0}''' -f $global:DebugPreference)
-                    $CurrentDebugPreference = $global:DebugPreference
-                    Write-Debug -Message '$global:DebugPreference = ''Continue'''
-                    $global:DebugPreference = 'Continue'
-                    Write-Debug -Message ('Invoke-ComputerMaintenance -ComputerName ''{0}'' 5>&1 | Split-Output -ScriptBlock {{{1}}} -Mode Debug' -f $ComputerName, $LogScriptBlock)
-                    Invoke-ComputerMaintenance -ComputerName $ComputerName 5>&1 | Split-Output -ScriptBlock $LogScriptBlock -Mode Debug
+            Write-Debug -Message 'if ($List)'
+            if ($List) {
+                Write-Debug -Message 'foreach ($ComputerName in $List)'
+                foreach ($ComputerName in $List) {
+                    Write-Debug -Message ('$ProcessedComputers: ''{0}''' -f [string]$ProcessedComputers)
+                    Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
+                    Write-Debug -Message ('if ($ProcessedComputers -notcontains $ComputerName)')
+                    if ($ProcessedComputers -notcontains $ComputerName) {
+                        Write-Debug -Message ('$null = $UnprocessedComputers.Add(''{0}'')' -f $ComputerName)
+                        $null = $UnprocessedComputers.Add($ComputerName)
+                        Write-Debug -Message ('$UnprocessedComputers: ''{0}''' -f [string]$UnprocessedComputers)
+                    }
                 }
-                else {
-                    Write-Debug -Message '$CurrentDebugPreference = $null'
-                    $CurrentDebugPreference = $null
-                    Write-Debug -Message ('Invoke-ComputerMaintenance -ComputerName ''{0}''' -f $ComputerName)
-                    Invoke-ComputerMaintenance -ComputerName $ComputerName
+
+                Write-Debug -Message ('$UnprocessedComputers: ''{0}''' -f [string]$UnprocessedComputers)
+                Write-Debug -Message 'if ($UnprocessedComputers)'
+                if ($UnprocessedComputers) {
+                    Write-Debug -Message '$ComputerName = $UnprocessedComputers[0]'
+                    $ComputerName = $UnprocessedComputers[0]
+                    Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
+
+                    Write-Debug -Message ('$LogFilePath = ''{0}'' -f ''{1}''' -f $LogFilePathTemplate, $ComputerName)
+                    $LogFilePath = $LogFilePathTemplate -f $ComputerName
+                    Write-Debug -Message ('$LogFilePath = ''{0}''' -f $LogFilePath)
+
+                    Write-Debug -Message ('$LogScriptBlock = [scriptblock]::Create((''Write-SimpleTextLog -Path ''''{{0}}'''' -MutexName ''''{{1}}'''''' -f {0}, {1}))' -f $LogFilePath, $LogMutexName)
+                    $LogScriptBlock = [scriptblock]::Create(('Write-SimpleTextLog -Path ''{0}'' -MutexName ''{1}''' -f $LogFilePath, $LogMutexName))
+                    Write-Debug -Message ('$LogScriptBlock = {0}' -f [string]$LogScriptBlock)
+
+                    Write-Debug -Message ('$DebugLog: ''{0}''' -f [string]$DebugLog)
+                    Write-Debug -Message 'if ($DebugLog)'
+                    if ($DebugLog) {
+                        Write-Debug -Message ('$CurrentDebugPreference = ''{0}''' -f $global:DebugPreference)
+                        $CurrentDebugPreference = $global:DebugPreference
+                        Write-Debug -Message '$global:DebugPreference = ''Continue'''
+                        $global:DebugPreference = 'Continue'
+                        Write-Debug -Message ('Invoke-ComputerMaintenance -ComputerName ''{0}'' 5>&1 | Split-Output -ScriptBlock {{{1}}} -Mode Debug' -f $ComputerName, $LogScriptBlock)
+                        Invoke-ComputerMaintenance -ComputerName $ComputerName 5>&1 | Split-Output -ScriptBlock $LogScriptBlock -Mode Debug
+                    }
+                    else {
+                        Write-Debug -Message '$CurrentDebugPreference = $null'
+                        $CurrentDebugPreference = $null
+                        Write-Debug -Message ('Invoke-ComputerMaintenance -ComputerName ''{0}''' -f $ComputerName)
+                        Invoke-ComputerMaintenance -ComputerName $ComputerName
+                    }
+
+                    Write-Debug -Message ('$null = $ProcessedComputers.Add(''{0}'')' -f $ComputerName)
+                    $null = $ProcessedComputers.Add($ComputerName)
+                    Write-Debug -Message ('$ProcessedComputers: ''{0}''' -f [string]$ProcessedComputers)
                 }
             }
-        }
+        } while ($UnprocessedComputers)
 
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
     }
@@ -110,5 +140,5 @@ function Invoke-InfrastructureMaintenance {
         Write-Debug -Message ('EXIT FINALLY {0}' -f $MyInvocation.MyCommand.Name)
     }
 
-    Write-Debug -Message ('EXIT {0}' -f $MyInvocation.MyCommand.Name)
+Write-Debug -Message ('EXIT {0}' -f $MyInvocation.MyCommand.Name)
 }
