@@ -15,6 +15,15 @@ The main function you need from this module is [**Invoke-InfrastructureMaintenan
 
 Under the hood, **Invoke-InfrastructureMaintenance** uses another function to actually perform maintenance on each host — [**Invoke-ComputerMaintenance**](docs/Invoke-ComputerMaintenance.md). If you want to use an external orchestration/configuration management system (Ansible, Puppet etc.), configure it to execute **Invoke-ComputerMaintenance**, not **Invoke-InfrastructureMaintenance**.
 
+## Update detection and installation
+**Invoke-ComputerMaintenance** uses the standard Windows Update API to detect and install updates. That means that to make updates available for a host, you have to make them available at WSUS or use direct connection to Microsoft Update. But you can exclude some updates from installation/detection:
+* Use the `UpdateInstallFilter` configuration attribute (or the `$ModuleWideInstallUpdateDefaultFilterString` module configuration variable) to specify filter for updates installation.
+* Use the `UpdateCheckFilter` configuration attribute (or the `$ModuleWideCheckUpdateDefaultFilterString` module configuration variable) to specify filter for updates detection.
+
+If the detection process (**Test-WindowsUpdateNeeded**) finds available updates, the host maintenance process will start. Otherwise, **Invoke-ComputerMaintenance** skips to the next host.
+
+There's no built-in way to install a specific update, but it is possible by leveraging step commands (see below), since you can execute custom commands and scripts there.
+
 ## Host types
 While the module can potentially support machines with various type of workloads, currently there are only two supported types:
 * **HV-SCVMM** - for stand-alone hypervisors (yes, *not* fail-over clusters) managed by SCVMM. Workload movement is provided by the [SCVMReliableMigration](https://github.com/FozzyHosting/SCVMReliableMigration) module.
@@ -85,8 +94,8 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[System.TimeSpan]$ModuleWideInstallUpdateThreshold` - Specifies how long the module will wait for the update installation to finish.
 * `[string]$ModuleWideInstallUpdateTaskName` - The name of a Task Scheduler task which executes code to find and install updates.
 * `[string]$ModuleWideInstallUpdateTaskDescription` - The description of a Task Scheduler task which executes code to find and install updates.
-* `[string]$ModuleWideCheckUpdateDefaultFilterString` - A filter which is used to detect new updates.
-* `[string]$ModuleWideInstallUpdateDefaultFilterString` - A filter which is used during updates installation.
+* `[string]$ModuleWideCheckUpdateDefaultFilterString` - A filter which is used to detect new updates. Used if an `UpdateCheckFilter` attribute is not defined in host's configuration.
+* `[string]$ModuleWideInstallUpdateDefaultFilterString` - A filter which is used during updates installation. Used if an `UpdateInstallFilter` attribute is not defined in host's configuration.
 * `[string]$ModuleWideUpdateSearchCriteria` - Criteria for the IUpdateSearcher::Search method (https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nf-wuapi-iupdatesearcher-search)
 
 ## Loading variables from an external source
