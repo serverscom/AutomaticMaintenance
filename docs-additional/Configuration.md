@@ -26,6 +26,7 @@ The `Include` attribute defines a collection of objects. Each of those objects m
 * Name - The name of a host where you want to install updates automatically. Should be unique.
 * Type - A type of a host. Currently, acceptable values are `HV-SCVMM`, `Generic`.
 * UpdateInstallFilter - A filter which is used to filter out unneeded updates, like preview versions etc.
+* Disabled - Settings this attribute to `True` allows you to temporary disable processing of this particular host. Useful when you need to perform some manual maintenance.
 
 The following set of attributes describes step commands (plug-ins):
 * PreClearCommands
