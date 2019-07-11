@@ -7,7 +7,8 @@ function Invoke-InfrastructureMaintenance {
         [string]$LogErrorFilePath = $ModuleWideLogErrorFilePath,
         [string]$LogFilePathTemplate = $ModuleWideLogFilePathTemplate,
         [string]$LogMutexName = $ModuleWideTextLogMutexName,
-        [switch]$DebugLog = $ModuleWideDebugLog
+        [switch]$DebugLog = $ModuleWideDebugLog,
+        [switch]$FailOnPreviousFailure = $ModuleWideFailOnPreviousFailure
     )
 
     $ErrorActionPreference = 'Stop'
@@ -20,9 +21,9 @@ function Invoke-InfrastructureMaintenance {
         Write-Debug -Message ('$LogErrorFilePath = ''{0}''' -f $LogErrorFilePath)
         Write-Debug -Message ('$LogFilePathTemplate = ''{0}''' -f $LogFilePathTemplate)
 
-        Write-Debug -Message ('$ModuleWideFailOnPreviousFailure : ''{0}''' -f $ModuleWideFailOnPreviousFailure)
-        Write-Debug -Message 'if ($ModuleWideFailOnPreviousFailure)'
-        if ($ModuleWideFailOnPreviousFailure) {
+        Write-Debug -Message ('$FailOnPreviousFailure : ''{0}''' -f $FailOnPreviousFailure)
+        Write-Debug -Message 'if ($FailOnPreviousFailure)'
+        if ($FailOnPreviousFailure) {
             Write-Debug -Message ('$LogErrorFileExistence = Test-Path -Path ''{0}''' -f $LogErrorFilePath)
             $LogErrorFileExistence = Test-Path -Path $LogErrorFilePath
             Write-Debug -Message ('$LogErrorFileExistence: {0}' -f $LogErrorFileExistence)

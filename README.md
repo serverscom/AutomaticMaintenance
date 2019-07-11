@@ -81,7 +81,7 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[bool]$ModuleWideDebugLog` - Default value for **Invoke-InfrastructureMaintenance**'s `-DebugLog` parameter.
 * `[string]$ModuleWideTextLogMutexName` - Default value for **Invoke-InfrastructureMaintenance**'s `-LogMutexName` parameter.
 * `[string]$ModuleWideErrorLogMutexName` - The name of a mutex used to access an error log file object.
-* `[bool]$ModuleWideFailOnPreviousFailure` - Defines if the maintenance process should not start when the error log exists.
+* `[bool]$ModuleWideFailOnPreviousFailure` - Default value for **Invoke-InfrastructureMaintenance**'s `-FailOnPreviousFailure` parameter.
 
 * `[string]$ModuleWideMaintenanceLogFilePath` - A path to the maintenance track log file.
 * `[string]$ModuleWideMaintenanceLogMutexName` - The name of a mutex used to access the maintenance track log file object.
