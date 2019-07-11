@@ -81,7 +81,7 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[bool]$ModuleWideDebugLog` - Default value for **Invoke-InfrastructureMaintenance**'s `-DebugLog` parameter.
 * `[string]$ModuleWideTextLogMutexName` - Default value for **Invoke-InfrastructureMaintenance**'s `-LogMutexName` parameter.
 * `[string]$ModuleWideErrorLogMutexName` - The name of a mutex used to access an error log file object.
-* `[bool]$ModuleWideFailOnPreviousFailure` - Defines if the maintenance process should not start when the error log exists.
+* `[bool]$ModuleWideFailOnPreviousFailure` - Default value for **Invoke-InfrastructureMaintenance**'s `-FailOnPreviousFailure` parameter.
 
 * `[string]$ModuleWideMaintenanceLogFilePath` - A path to the maintenance track log file.
 * `[string]$ModuleWideMaintenanceLogMutexName` - The name of a mutex used to access the maintenance track log file object.
@@ -89,6 +89,8 @@ There are several variables defined in the .psm1-file, which are used by the mod
 
 * `[int]$ModuleWidePreventiveLockTimeout` - Default value for **Invoke-ComputerMaintenance**'s `-PreventiveLockTimeout` parameter.
 * `[System.TimeSpan]$ModuleWidePreventiveLockThreshold` - Default value for **Invoke-ComputerMaintenance**'s `-PreventiveLockThreshold` parameter.
+* `[bool]$ModuleWideSkipPreventivelyLocked` - Default value for **Invoke-ComputerMaintenance**'s `-SkipPreventivelyLocked` parameter.
+* `[bool]$ModuleWideSkipNotLockable` - Default value for **Invoke-ComputerMaintenance**'s `-SkipNotLockable` parameter.
 
 * `[int]$ModuleWideInstallUpdateTimeout` - Specifies, in seconds, how often the module will request the state of an install update scheduled task. Effectively, this parameter defines the minimum time which the installation will take.
 * `[System.TimeSpan]$ModuleWideInstallUpdateThreshold` - Specifies how long the module will wait for the update installation to finish.

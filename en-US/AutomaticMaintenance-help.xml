@@ -207,7 +207,7 @@
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Use this function to perform maintenance on a single host, defined in the hosts configuration file. If you use an orchestration/configuration management system, you might want to execute this function from there.</maml:para>
+      <maml:para>Use this function to perform maintenance on a single host, defined in the hosts configuration file. If you use an orchestration/configuration management system, you might prefer it over Invoke-InfrastructureMaintenance to run Invoke-ComputerMaintenance .</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -248,6 +248,28 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>SkipNotLockable</maml:name>
+          <maml:Description>
+            <maml:para>Defines if the maintenance process should silently skip a host if the function cannot put a host lock on it. Otherwise the function will raise an exception.</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>SkipPreventivelyLocked</maml:name>
+          <maml:Description>
+            <maml:para>Defines if the maintenance process should silently skip a host if it is locked by some other function. Otherwise the function will raise an exception.</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -286,6 +308,30 @@
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>SkipNotLockable</maml:name>
+        <maml:Description>
+          <maml:para>Defines if the maintenance process should silently skip a host if the function cannot put a host lock on it. Otherwise the function will raise an exception.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>SkipPreventivelyLocked</maml:name>
+        <maml:Description>
+          <maml:para>Defines if the maintenance process should silently skip a host if it is locked by some other function. Otherwise the function will raise an exception.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -341,7 +387,7 @@
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>The function performs maintenance on all hosts defined in the hosts configuration files, one by one. Its main purpose is to be executed from Task Scheduler. We do not recommend to execute this function from an orchestration/configuration management system (Ansible, Chef, System Center Orchestrator etc.) - use `Invoke-ComputerMaintenance` for that.</maml:para>
+      <maml:para>The function performs maintenance on all hosts defined in the hosts configuration files, one by one. Its main purpose is to be executed from Task Scheduler. We do not recommend to execute this function from an orchestration/configuration management system (Ansible, Chef, System Center Orchestrator etc.) - use Invoke-ComputerMaintenance for that.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -386,6 +432,17 @@
           <maml:name>DebugLog</maml:name>
           <maml:Description>
             <maml:para>Specifies if the function should log maintenance process in details through the debug log.</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>FailOnPreviousFailure</maml:name>
+          <maml:Description>
+            <maml:para>Defines if the maintenance process should not start when an error log exists.</maml:para>
           </maml:Description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -443,6 +500,18 @@
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>FailOnPreviousFailure</maml:name>
+        <maml:Description>
+          <maml:para>Defines if the maintenance process should not start when an error log exists.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
