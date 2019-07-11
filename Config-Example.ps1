@@ -23,6 +23,8 @@
 
 [int]$ModuleWidePreventiveLockTimeout = 60
 [System.TimeSpan]$ModuleWidePreventiveLockThreshold = New-Object -TypeName 'System.TimeSpan' -ArgumentList @(1, 0, 0)
+[bool]$ModuleWideSkipPreventivelyLocked = $true
+[bool]$ModuleWideSkipNotLockable = $true
 
 [int]$ModuleWideInstallUpdateTimeout = 60
 [System.TimeSpan]$ModuleWideInstallUpdateThreshold = New-Object -TypeName 'System.TimeSpan' -ArgumentList @(1, 0, 0)
