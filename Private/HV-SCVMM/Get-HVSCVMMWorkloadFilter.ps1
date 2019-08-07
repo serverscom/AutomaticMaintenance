@@ -49,8 +49,8 @@ function Get-HVSCVMMWorkloadFilter {
         Write-Debug -Message ('$Filter = ''{0}''' -f $Filter)
         Write-Debug -Message 'if ($Filter)'
         if ($Filter) {
-                Write-Debug -Message ('$FilterString = ''{{0}} -and {{1}}'' -f ''{0}'', ''{1}''' -f $FilterString, $Filter)
-                $FilterString = '{0} -and {1}' -f $FilterString, $Filter
+            Write-Debug -Message ('$FilterString = ''{{0}} -and {{1}}'' -f ''{0}'', ''{1}''' -f $FilterString, $Filter)
+            $FilterString = '{0} -and {1}' -f $FilterString, $Filter
         }
         Write-Debug -Message ('$FilterString = ''{0}''' -f $FilterString)
         

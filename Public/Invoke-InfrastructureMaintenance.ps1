@@ -141,5 +141,5 @@ function Invoke-InfrastructureMaintenance {
         Write-Debug -Message ('EXIT FINALLY {0}' -f $MyInvocation.MyCommand.Name)
     }
 
-Write-Debug -Message ('EXIT {0}' -f $MyInvocation.MyCommand.Name)
+    Write-Debug -Message ('EXIT {0}' -f $MyInvocation.MyCommand.Name)
 }
