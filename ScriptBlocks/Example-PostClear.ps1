@@ -7,7 +7,7 @@ Param (
     [string]$ComputerName,
     [System.Management.Automation.PSVariable[]]$Variables,
     [string]$YourFavoriteMonitoringSystemUserName = 'AutoMaintenanceSvc',
-    [string]$YourFavoriteMonitoringSystemComputerName = 'mon.example.com',
+    [string]$YourFavoriteMonitoringSystemComputerName = 'mon.example.com'
 )
 
 $ErrorActionPreference = 'Stop'
