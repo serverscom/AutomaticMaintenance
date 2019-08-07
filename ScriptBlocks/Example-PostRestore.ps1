@@ -13,7 +13,7 @@ Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 
 try {
     Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
-    
+
     Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
 }
 catch {

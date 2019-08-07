@@ -33,7 +33,7 @@ function Invoke-ErrorProcessing {
         [void]$StringBuilder.AppendLine('CategoryInfo.TargetName: {0}' -f $ErrorRecord.CategoryInfo.TargetName)
         [void]$StringBuilder.AppendLine('CategoryInfo.TargetType: {0}' -f $ErrorRecord.CategoryInfo.TargetType)
         $ErrorMessage = $StringBuilder.ToString()
-        
+
         Write-Debug -Message ('Write-SimpleTextLog -Path ''{0}'' -Message ''{1}'' -MutexName ''{2}''' -f $Path, $ErrorMessage, $LogMutexName)
         Write-SimpleTextLog -Path $Path -Message $ErrorMessage -MutexName $LogMutexName
 

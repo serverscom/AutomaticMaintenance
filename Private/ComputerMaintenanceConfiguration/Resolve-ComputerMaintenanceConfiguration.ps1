@@ -8,7 +8,7 @@ function Resolve-ComputerMaintenanceConfiguration {
     )
 
     $ErrorActionPreference = 'Stop'
-    
+
     Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 
     try {
@@ -16,7 +16,7 @@ function Resolve-ComputerMaintenanceConfiguration {
 
         Write-Debug -Message ('$Configuration: {0}' -f [string]$Configuration)
         Write-Debug -Message ('$Configuration.GetType(): {0}' -f $Configuration.GetType())
-        
+
         foreach ($ConfigurationSet in $Configuration) {
             Write-Debug -Message ('$ConfigurationSet: ''{0}''' -f [string]$ConfigurationSet)
             Write-Debug -Message ('$ConfigurationSet.GetType(): {0}' -f $ConfigurationSet.GetType())

@@ -19,7 +19,7 @@ function Resolve-SCVMHost {
         Write-Debug -Message ('$ComputerMaintenanceConfiguration = Get-ComputerMaintenanceConfiguration -ComputerName ''{0}''' -f $ComputerName)
         $ComputerMaintenanceConfiguration = Get-ComputerMaintenanceConfiguration -ComputerName $ComputerName
         Write-Debug -Message ('$ComputerMaintenanceConfiguration: ''{0}''' -f [string]$ComputerMaintenanceConfiguration)
-        
+
         Write-Debug -Message ('Get-SCVMHost -ComputerName ''{0}'' -VMMServer ''{1}''' -f $ComputerName, $ComputerMaintenanceConfiguration.VMMServerName)
         Get-SCVMHost -ComputerName $ComputerName -VMMServer $ComputerMaintenanceConfiguration.VMMServerName
 

@@ -23,7 +23,7 @@ function Get-LockCallerName {
         Write-Debug -Message ('$CallerName = {0}' -f $CallerName)
         Write-Debug -Message ('''{{0}}@{{1}}'' -f ''{0}'', ''{1}''' -f $CallerName, $ScriptHostDnsName)
         '{0}@{1}' -f $CallerName, $ScriptHostDnsName
-    
+
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
     }
     catch {

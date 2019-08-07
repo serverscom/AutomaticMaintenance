@@ -9,7 +9,7 @@ function Get-ComputerMaintenanceConfigurationTemplate {
     )
 
     $ErrorActionPreference = 'Stop'
-    
+
     Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 
     try {

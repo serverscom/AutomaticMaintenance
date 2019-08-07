@@ -53,7 +53,7 @@ function Get-HVSCVMMWorkloadFilter {
             $FilterString = '{0} -and {1}' -f $FilterString, $Filter
         }
         Write-Debug -Message ('$FilterString = ''{0}''' -f $FilterString)
-        
+
         Write-Debug -Message ('[scriptblock]::Create(''{0}'')' -f $FilterString)
         [scriptblock]::Create($FilterString)
 

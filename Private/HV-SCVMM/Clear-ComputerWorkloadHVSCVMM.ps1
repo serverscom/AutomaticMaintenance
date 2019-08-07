@@ -18,7 +18,7 @@ function Clear-ComputerWorkloadHVSCVMM {
     )
 
     $ErrorActionPreference = 'Stop'
-    
+
     Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 
     try {
@@ -106,7 +106,7 @@ function Clear-ComputerWorkloadHVSCVMM {
                 $Message = 'Unable to proceed: unable to migrate some VMs ({0}) from host {1} to host {2}' -f [string]$UnmigratableVMs.Name, $ComputerName, $DestinationVMHostName
                 $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.InvalidOperationException' -ArgumentList $Message), 'InvalidOperationException', [System.Management.Automation.ErrorCategory]::ResourceBusy, $null)))
             }
-            
+
             Write-Debug -Message ([string]$true)
             $true
         }

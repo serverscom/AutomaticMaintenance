@@ -132,7 +132,7 @@ function Invoke-ComputerMaintenance {
                             Set-Variable -Name $PostClearVariable.Name -Value $PostClearVariable.Value
                         }
                     }
-            
+
                     Write-Debug -Message ('Start-Maintenance -ComputerName ''{0}''' -f $ComputerName)
                     Start-Maintenance -ComputerName $ComputerName
                     Write-Debug -Message ('Set-MaintenanceState -ComputerName ''{0}''' -f $ComputerName)

@@ -1,6 +1,6 @@
 function Set-MaintenanceState {
     #Requires -Version 3.0
-    
+
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory)]
@@ -13,7 +13,7 @@ function Set-MaintenanceState {
     $ErrorActionPreference = 'Stop'
 
     Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
-    
+
     try {
         Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
