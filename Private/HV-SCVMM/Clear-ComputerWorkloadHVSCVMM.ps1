@@ -79,7 +79,8 @@ function Clear-ComputerWorkloadHVSCVMM {
                 Write-Debug -Message ('$DestinationVMs: {0}' -f [string]$DestinationVMs.Name)
             }
 
-            Write-Debug -Message 'if ($DestinationVMs.Name)'
+            Write-Debug -Message ('$DestinationVMs: {0}' -f [string]$DestinationVMs.Name)
+            Write-Debug -Message 'if ($DestinationVMs)'
             if ($DestinationVMs) {
                 $Message = 'Unable to proceed: the destination server {0} should not contain any VMs, but it does ({1})' -f $DestinationVMHostName, [string]$DestinationVMs.Name
                 $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.InvalidOperationException' -ArgumentList $Message), 'InvalidOperationException', [System.Management.Automation.ErrorCategory]::LimitsExceeded, $null)))
