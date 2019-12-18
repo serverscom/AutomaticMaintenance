@@ -66,6 +66,8 @@ function Clear-ComputerWorkloadHVSCVMM {
 
         Write-Debug -Message 'if ($SourceVMs)'
         if ($SourceVMs) {
+            Write-Debug -Message ('$DestinationFilter: {0}' -f $DestinationFilter)
+            Write-Debug -Message 'if ($DestinationFilter)'
             if ($DestinationFilter) {
                 Write-Debug -Message ('$DestinationVMs = Get-SCVirtualMachine -VMHost ''{0}'' | Where-Object -FilterScript {{{1}}}' -f $DestinationVMHost.Name, $DestinationFilter)
                 $DestinationVMs = Get-SCVirtualMachine -VMHost $DestinationVMHost | Where-Object -FilterScript $DestinationFilter
