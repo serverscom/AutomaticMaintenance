@@ -35,7 +35,7 @@ function Restore-ComputerWorkload {
                     $DestinationFilter = $FilterData.Destination
                     Write-Debug -Message ('$DestinationFilter = ''{0}''' -f $DestinationFilter)
 
-                    Write-Debug -Message ('$null = Clear-ComputerWorkloadHVSCVMM -ComputerName {0} -DestinationVMHostName {1} -DestinationVMHostPath {2} -DestinationVMHostLock {3} -SourceFilter {4} -DestinationFilter {5} -MaxParallelMigrations {6}' -f $WorkloadPair.DestinationName, $ComputerName, $WorkloadPair.Path, $DestinationHostLock.Value, $SourceFilter, $DestinationFilter, $WorkloadPair.MaxParallelMigrations)
+                    Write-Debug -Message ('$null = Clear-ComputerWorkloadHVSCVMM -ComputerName {0} -DestinationVMHostName {1} -DestinationVMHostPath {2} -DestinationVMHostLock {3} -SourceFilter {{{4}}} -DestinationFilter {{{5}}} -MaxParallelMigrations {6}' -f $WorkloadPair.DestinationName, $ComputerName, $WorkloadPair.Path, $DestinationHostLock.Value, $SourceFilter, $DestinationFilter, $WorkloadPair.MaxParallelMigrations)
                     $null = Clear-ComputerWorkloadHVSCVMM -ComputerName $WorkloadPair.DestinationName -DestinationVMHostName $ComputerName -DestinationVMHostPath $WorkloadPair.Path -DestinationVMHostLock ([ref]$DestinationHostLock) -SourceFilter $SourceFilter -DestinationFilter $DestinationFilter -MaxParallelMigrations $WorkloadPair.MaxParallelMigrations
                 }
             }
