@@ -9,7 +9,10 @@ function Get-HVSCVMMWorkloadFilter {
         [Parameter(ParameterSetName = 'ByNamePath', Mandatory)]
         [string]$ComputerName,
         [Parameter(ParameterSetName = 'ByNamePath', Mandatory)]
-        [string]$Path
+        [string]$Path,
+        [Parameter(ParameterSetName = 'ByWLPair')]
+        [Parameter(ParameterSetName = 'ByNamePath')]
+        [switch]$Destination
     )
 
     $ErrorActionPreference = 'Stop'
@@ -22,6 +25,7 @@ function Get-HVSCVMMWorkloadFilter {
         Write-Debug -Message ('$WorkloadPair: ''{0}''' -f [string]$WorkloadPair)
         Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
         Write-Debug -Message ('$Path = ''{0}''' -f $Path)
+        Write-Debug -Message ('$Destination: ''{0}''' -f $Destination)
 
         Write-Debug -Message 'if (-not $WorkloadPair)'
         if (-not $WorkloadPair) {
@@ -34,18 +38,30 @@ function Get-HVSCVMMWorkloadFilter {
             Write-Debug -Message ('$WorkloadPair = $WorkloadConfiguration | Where-Object -FilterScript {{$_.Path -eq ''{0}''}}' -f $Path)
             $WorkloadPair = $WorkloadConfiguration | Where-Object -FilterScript {$_.Path -eq $Path}
         }
-
         Write-Debug -Message ('$WorkloadPair: ''{0}''' -f [string]$WorkloadPair)
-        Write-Debug -Message ('$SourceFilterPath = [System.IO.Path]::Combine(''{0}'', ''*'')' -f $WorkloadPair.Path)
-        $FilterPath = [System.IO.Path]::Combine($WorkloadPair.Path, '*') # Join-Path cannot combine paths on a drive which does not exist on the machine
+
+        Write-Debug -Message 'if ($Destination)'
+        if ($Destination) {
+            $WorkloadPairPath = $WorkloadPair.DestinationPath
+            $WorkloadPairFilter = $WorkloadPair.DestinationFilter
+        }
+        else {
+            $WorkloadPairPath = $WorkloadPair.Path
+            $WorkloadPairFilter = $WorkloadPair.Filter
+        }
+        Write-Debug -Message ('$WorkloadPairPath = ''{0}''' -f $WorkloadPairPath)
+        Write-Debug -Message ('$WorkloadPairFilter: ''{0}''' -f $WorkloadPairFilter)
+
+        Write-Debug -Message ('$FilterPath = [System.IO.Path]::Combine(''{0}'', ''*'')' -f $WorkloadPairPath)
+        $FilterPath = [System.IO.Path]::Combine($WorkloadPairPath, '*') # Join-Path cannot combine paths on a drive which does not exist on the machine
         Write-Debug -Message ('$FilterPath = ''{0}''' -f $FilterPath)
         Write-Debug -Message ('$FilterString = ''$_.Location -like ''''{{0}}'''''' -f ''{0}''' -f $FilterPath)
         $FilterString = '$_.Location -like ''{0}''' -f $FilterPath
         Write-Debug -Message ('$FilterString = ''{0}''' -f $FilterString)
 
-        Write-Debug -Message ('$WorkloadPair.Filter: ''{0}''' -f $WorkloadPair.Filter)
-        Write-Debug -Message '$Filter = $WorkloadPair.Filter'
-        $Filter = $WorkloadPair.Filter
+
+        Write-Debug -Message '$Filter = $WorkloadPairFilter'
+        $Filter = $WorkloadPairFilter
         Write-Debug -Message ('$Filter = ''{0}''' -f $Filter)
         Write-Debug -Message 'if ($Filter)'
         if ($Filter) {

@@ -110,11 +110,11 @@ function Clear-ComputerWorkloadHVSCVMM {
                 $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.InvalidOperationException' -ArgumentList $Message), 'InvalidOperationException', [System.Management.Automation.ErrorCategory]::ResourceBusy, $null)))
             }
 
-            Write-Debug -Message ([string]$true)
+            Write-Debug -Message '$true'
             $true
         }
         else {
-            Write-Debug -Message ([string]$false)
+            Write-Debug -Message '$false'
             $false
         }
 
