@@ -4,7 +4,6 @@ function Get-HVFilterString {
     Param (
         [Parameter(Mandatory)]
         [string]$Path,
-        [Parameter(Mandatory)]
         [string]$Filter,
         [ValidateSet('HV-SCVMM', 'HV-Vanilla')]
         [string]$Mode = 'HV-SCVMM'
@@ -38,17 +37,13 @@ function Get-HVFilterString {
         }
         Write-Debug -Message ('$VMLocationPropertyName = ''{0}''' -f $VMLocationPropertyName)
 
-        Write-Debug -Message ('$FilterPath = [System.IO.Path]::Combine(''{0}'', ''*'')' -f $WorkloadPairPath)
-        $FilterPath = [System.IO.Path]::Combine($WorkloadPairPath, '*') # Join-Path cannot combine paths on a drive which does not exist on the machine
+        Write-Debug -Message ('$FilterPath = [System.IO.Path]::Combine(''{0}'', ''*'')' -f $Path)
+        $FilterPath = [System.IO.Path]::Combine($Path, '*') # Join-Path cannot combine paths on a drive which does not exist on the machine
         Write-Debug -Message ('$FilterPath = ''{0}''' -f $FilterPath)
         Write-Debug -Message ('$FilterString = ''$_.{{0}} -like ''''{{1}}'''''' -f ''{0}'', ''{1}''' -f $VMLocationPropertyName, $FilterPath)
         $FilterString = ('$_.{0} -like ''{1}''' -f $VMLocationPropertyName, $FilterPath)
         Write-Debug -Message ('$FilterString = ''{0}''' -f $FilterString)
 
-
-        Write-Debug -Message '$Filter = $WorkloadPairFilter'
-        $Filter = $WorkloadPairFilter
-        Write-Debug -Message ('$Filter = ''{0}''' -f $Filter)
         Write-Debug -Message 'if ($Filter)'
         if ($Filter) {
             Write-Debug -Message ('$FilterString = ''{{0}} -and {{1}}'' -f ''{0}'', ''{1}''' -f $FilterString, $Filter)
