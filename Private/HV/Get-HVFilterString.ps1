@@ -21,17 +21,22 @@ function Get-HVFilterString {
         Write-Debug -Message ('$Filter = ''{0}''' -f $Filter)
         Write-Debug -Message ('$Mode = ''{0}''' -f $Mode)
 
+        Write-Debug -Message '$VMLocationPropertyName = switch ($Mode)'
         $VMLocationPropertyName = switch ($Mode) {
             'HV-SCVMM' {
+                Write-Debug -Message 'Location'
                 'Location'
             }
             'HV-Vanilla' {
+                Write-Debug -Message 'Path'
                 'Path'
             }
             Default {
+                Write-Debug -Message 'Location'
                 'Location'
             }
         }
+        Write-Debug -Message ('$VMLocationPropertyName = ''{0}''' -f $VMLocationPropertyName)
 
         Write-Debug -Message ('$FilterPath = [System.IO.Path]::Combine(''{0}'', ''*'')' -f $WorkloadPairPath)
         $FilterPath = [System.IO.Path]::Combine($WorkloadPairPath, '*') # Join-Path cannot combine paths on a drive which does not exist on the machine
