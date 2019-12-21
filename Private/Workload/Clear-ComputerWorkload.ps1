@@ -15,7 +15,7 @@ function Clear-ComputerWorkload {
     try {
         Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
-        Write-Debug -Message ('$ComputerName = {0}' -f $ComputerName)
+        Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
         Write-Debug -Message ('$DestinationHostLock: {0}' -f $DestinationHostLock)
         Write-Debug -Message ('$DestinationHostLock.Value: {0}' -f $DestinationHostLock.Value)
 
@@ -27,12 +27,19 @@ function Clear-ComputerWorkload {
         switch ($ComputerMaintenanceConfiguration.Type) {
             'HV-SCVMM' {
                 foreach ($WorkloadPair in $ComputerMaintenanceConfiguration.Workload) {
-                    Write-Debug -Message '$SourceFilter = Get-HVSCVMMWorkloadFilter -WorkloadPair $WorkloadPair'
-                    $SourceFilter = Get-HVSCVMMWorkloadFilter -WorkloadPair $WorkloadPair
-                    Write-Debug -Message ('$DestinationFilter = Get-HVSCVMMWorkloadFilter -ComputerName ''{0}'' -Path ''{1}''' -f $WorkloadPair.DestinationName, $WorkloadPair.DestinationPath)
-                    $DestinationFilter = Get-HVSCVMMWorkloadFilter -ComputerName $WorkloadPair.DestinationName -Path $WorkloadPair.DestinationPath
+                    Write-Debug -Message ('$WorkloadPair: ''{0}''' -f [string]$WorkloadPair)
 
-                    Write-Debug -Message ('Clear-ComputerWorkloadHVSCVMM -ComputerName {0} -DestinationVMHostName {1} -DestinationVMHostPath {2} -DestinationVMHostLock {3} -SourceFilter {4} -DestinationFilter {5} -MaxParallelMigrations {6}' -f $ComputerName, $WorkloadPair.DestinationName, $WorkloadPair.DestinationPath, $DestinationHostLock.Value, $SourceFilter, $DestinationFilter, $WorkloadPair.MaxParallelMigrations)
+                    Write-Debug -Message ('$FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode ''{0}''' -f $_)
+                    $FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode $_
+                    Write-Debug -Message ('$FilterData = ''{0}''' -f $FilterData)
+                    Write-Debug -Message '$SourceFilter = $FilterData.Source'
+                    $SourceFilter = $FilterData.Source
+                    Write-Debug -Message ('$SourceFilter = ''{0}''' -f $SourceFilter)
+                    Write-Debug -Message '$DestinationFilter = $FilterData.Destination'
+                    $DestinationFilter = $FilterData.Destination
+                    Write-Debug -Message ('$DestinationFilter = ''{0}''' -f $DestinationFilter)
+
+                    Write-Debug -Message ('Clear-ComputerWorkloadHVSCVMM -ComputerName {0} -DestinationVMHostName {1} -DestinationVMHostPath {2} -DestinationVMHostLock {3} -SourceFilter {{{4}}} -DestinationFilter {{{5}}} -MaxParallelMigrations {6}' -f $ComputerName, $WorkloadPair.DestinationName, $WorkloadPair.DestinationPath, $DestinationHostLock.Value, $SourceFilter, $DestinationFilter, $WorkloadPair.MaxParallelMigrations)
                     Clear-ComputerWorkloadHVSCVMM -ComputerName $ComputerName -DestinationVMHostName $WorkloadPair.DestinationName -DestinationVMHostPath $WorkloadPair.DestinationPath -DestinationVMHostLock $DestinationHostLock -SourceFilter $SourceFilter -DestinationFilter $DestinationFilter -MaxParallelMigrations $WorkloadPair.MaxParallelMigrations
                 }
             }
@@ -43,6 +50,7 @@ function Clear-ComputerWorkload {
                 # TODO
             }
             'Generic' {
+                Write-Debug -Message '$false'
                 $false # Generic hosts have no workload to migrate
             }
         }
