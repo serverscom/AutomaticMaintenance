@@ -19,7 +19,7 @@ function Test-MaintenanceNeeded {
 
         Write-Debug -Message ('$IsMaintenanceNeeded = Test-WindowsUpdateNeeded -ComputerName ''{0}''' -f $ComputerName)
         $IsMaintenanceNeeded = Test-WindowsUpdateNeeded -ComputerName $ComputerName
-        Write-Debug -Message ('$IsMaintenanceNeeded = ''{0}''' -f $IsMaintenanceNeeded)
+        Write-Debug -Message ('$IsMaintenanceNeeded: ''{0}''' -f $IsMaintenanceNeeded)
         Write-Debug -Message '$IsMaintenanceNeeded'
         $IsMaintenanceNeeded
 
