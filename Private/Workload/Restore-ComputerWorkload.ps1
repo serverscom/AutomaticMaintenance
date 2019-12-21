@@ -25,11 +25,6 @@ function Restore-ComputerWorkload {
         switch ($ComputerMaintenanceConfiguration.Type) {
             'HV-SCVMM' {
                 foreach ($WorkloadPair in $ComputerMaintenanceConfiguration.Workload) {
-                    Write-Debug -Message '$DestinationFilter = Get-HVSCVMMWorkloadFilter -WorkloadPair $WorkloadPair'
-                    $DestinationFilter = Get-HVSCVMMWorkloadFilter -WorkloadPair $WorkloadPair
-                    Write-Debug -Message ('$SourceFilter = Get-HVSCVMMWorkloadFilter -ComputerName ''{0}'' -Path ''{1}''' -f $WorkloadPair.DestinationName, $WorkloadPair.DestinationPath)
-                    $SourceFilter = Get-HVSCVMMWorkloadFilter -ComputerName $WorkloadPair.DestinationName -Path $WorkloadPair.DestinationPath
-
                     Write-Debug -Message ('$FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode ''{0}'' -Restore' -f $_)
                     $FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode $_ -Restore
                     Write-Debug -Message ('$FilterData = ''{0}''' -f $FilterData)
