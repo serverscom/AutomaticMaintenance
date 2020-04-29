@@ -51,7 +51,6 @@ function Invoke-WindowsUpdate {
         [ScriptBlock]$UpdateScriptBlock = {
             $Searcher = New-Object -ComObject Microsoft.Update.Searcher
             $SearchResult = $Searcher.Search($Criteria).Updates
-            $Session = New-Object -ComObject Microsoft.Update.Session
 
             $DesiredUpdates = New-Object -ComObject Microsoft.Update.UpdateColl
             foreach ($Item in $SearchResult) {
@@ -63,6 +62,7 @@ function Invoke-WindowsUpdate {
             }
 
             if ($DesiredUpdates.Count -gt 0) {
+                $Session = New-Object -ComObject Microsoft.Update.Session
                 $Downloader = $Session.CreateUpdateDownloader()
                 $Downloader.Updates = $DesiredUpdates
                 $null = $Downloader.Download()
