@@ -28,9 +28,9 @@ function Get-ComputerMaintenanceConfiguration {
 
         Write-Debug -Message ('$FileContent = (Get-Content -Path {0}) -join "`n" | ConvertFrom-Json' -f $FilePath)
         $FileContent = (Get-Content -Path $FilePath) -join "`n" | ConvertFrom-Json # https://github.com/PowerShell/PowerShell/issues/3424
-        Write-Debug -Message ('$FileContent: {0}' -f [string]$FileContent.Name)
-        Write-Debug -Message '$GroupNames = $FileContent.Name | Group-Object'
-        $GroupNames = $FileContent.Name | Group-Object
+        Write-Debug -Message ('$FileContent: ''{0}''' -f [string]$FileContent.Name)
+        Write-Debug -Message '$GroupNames = $FileContent.Name | Group-Object'  
+        $GroupNames = $FileContent.Name | Group-Object 
         Write-Debug -Message ('$GroupNames: ''{0}''' -f [string]$GroupNames.Name)
         Write-Debug '$UniqueNamesTest = $GroupNames | Where-Object -FilterScript {$_.Count -gt 1}'
         $UniqueNamesTest = $GroupNames | Where-Object -FilterScript {$_.Count -gt 1}

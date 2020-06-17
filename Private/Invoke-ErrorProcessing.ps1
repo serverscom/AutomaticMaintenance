@@ -7,7 +7,9 @@ function Invoke-ErrorProcessing {
         [System.Management.Automation.ErrorRecord]$ErrorRecord,
         [Parameter(Mandatory)]
         [string]$Path,
-        [string]$LogMutexName = $ModuleWideErrorLogMutexName
+        [string]$LogMutexName = $ModuleWideErrorLogMutexName,
+        [switch]$XMLDump = $ModuleWideErrorXMLDump,
+        [int]$XMLDumpDepth = $ModuleWideErrorXMLDumpDepth
     )
 
     $ErrorActionPreference = 'Stop'
@@ -19,6 +21,9 @@ function Invoke-ErrorProcessing {
 
         Write-Debug -Message ('$ErrorRecord: {0}' -f $ErrorRecord)
         Write-Debug -Message ('$Path = ''{0}''' -f $Path)
+        Write-Debug -Message ('$LogMutexName = ''{0}''' -f $LogMutexName)
+        Write-Debug -Message ('$XMLDump: {0}' -f $XMLDump)
+        Write-Debug -Message ('$XMLDumpDepth = {0}' -f $XMLDumpDepth)
 
         $StringBuilder = New-Object -TypeName 'System.Text.StringBuilder'
         [void]$StringBuilder.AppendLine('Exception.Message: {0}' -f $ErrorRecord.Exception.Message)
@@ -36,6 +41,15 @@ function Invoke-ErrorProcessing {
 
         Write-Debug -Message ('Write-SimpleTextLog -Path ''{0}'' -Message ''{1}'' -MutexName ''{2}''' -f $Path, $ErrorMessage, $LogMutexName)
         Write-SimpleTextLog -Path $Path -Message $ErrorMessage -MutexName $LogMutexName
+
+        Write-Debug -Message 'if ($XMLDump)'
+        if ($XMLDump) {
+            Write-Debug -Message ('$XMLDumpPath = ''{{0}}.xml'' -f ''{0}''' -f $Path)
+            $XMLDumpPath = '{0}.xml' -f $Path
+            Write-Debug -Message ('$XMLDumpPath = ''{0}''' -f $XMLDumpPath)
+            Write-Debug -Message ('$null = Export-Clixml -InputObject $ErrorRecord -Path ''{0}'' -Depth {1} -Force' -f $XMLDumpPath, $XMLDumpDepth)
+            $null = Export-Clixml -InputObject $ErrorRecord -Path $XMLDumpPath -Depth $XMLDumpDepth -Force
+        }
 
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
     }

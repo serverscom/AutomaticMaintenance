@@ -12,10 +12,12 @@
 [string]$ModuleWideComputerMaintenanceConfigurationTemplatesFilePath = Join-Path -Path $ModulePath -Childpath ('{0}-Templates.json' -f $ModuleName)
 [string]$ModuleWideScriptBlocksFolderPath = Join-Path -Path $ModulePath -ChildPath 'ScriptBlocks'
 
-[bool]$ModuleWideDebugLog = $true
+[bool]$ModuleWideDebugLog = $false
 [string]$ModuleWideTextLogMutexName = '{0}Log' -f $ModuleName
 [string]$ModuleWideErrorLogMutexName = '{0}ErrorLog' -f $ModuleName
 [bool]$ModuleWideFailOnPreviousFailure = $true
+[bool]$ModuleWideErrorXMLDump = $true
+[int]$ModuleWideErrorXMLDumpDepth = 5
 
 [string]$ModuleWideMaintenanceLogFilePath = Join-Path -Path $ModulePath -Childpath ('{0}-HostMaintenanceLog.log' -f $ModuleName)
 [string]$ModuleWideMaintenanceLogMutexName = '{0}MaintenanceLogMutex' -f $ModuleName

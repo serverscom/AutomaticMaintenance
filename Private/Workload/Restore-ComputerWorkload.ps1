@@ -21,7 +21,8 @@ function Restore-ComputerWorkload {
         $ComputerMaintenanceConfiguration = Get-ComputerMaintenanceConfiguration -ComputerName $ComputerName
         Write-Debug -Message ('$ComputerMaintenanceConfiguration: {0}' -f [string]$ComputerMaintenanceConfiguration)
 
-        Write-Debug -Message ('switch ({0})' -f $ComputerMaintenanceConfiguration.Type)
+        Write-Debug -Message ('$ComputerMaintenanceConfiguration.Type: ''{0}''' -f $ComputerMaintenanceConfiguration.Type)
+        Write-Debug -Message 'switch ($ComputerMaintenanceConfiguration.Type)'
         switch ($ComputerMaintenanceConfiguration.Type) {
             'HV-SCVMM' {
                 foreach ($WorkloadPair in $ComputerMaintenanceConfiguration.Workload) {
