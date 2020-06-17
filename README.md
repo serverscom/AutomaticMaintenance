@@ -82,6 +82,8 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[string]$ModuleWideTextLogMutexName` - Default value for **Invoke-InfrastructureMaintenance**'s `-LogMutexName` parameter.
 * `[string]$ModuleWideErrorLogMutexName` - The name of a mutex used to access an error log file object.
 * `[bool]$ModuleWideFailOnPreviousFailure` - Default value for **Invoke-InfrastructureMaintenance**'s `-FailOnPreviousFailure` parameter.
+* `[bool]$ModuleWideErrorXMLDump` - Enables an additional error dump in the XML format: the error object exports through the `Export-CliXml` cmdlet.
+* `[int]$ModuleWideErrorXMLDumpDepth` - When `$ModuleWideErrorXMLDump` is set to `$true`, use this variable to tune the object's depth.
 
 * `[string]$ModuleWideMaintenanceLogFilePath` - A path to the maintenance track log file.
 * `[string]$ModuleWideMaintenanceLogMutexName` - The name of a mutex used to access the maintenance track log file object.

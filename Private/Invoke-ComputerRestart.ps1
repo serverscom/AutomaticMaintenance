@@ -14,7 +14,7 @@ function Invoke-ComputerRestart {
     try {
         Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
-        Write-Debug -Message ('$ComputerName = {0}' -f $ComputerName)
+        Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
 
         Write-Debug -Message ('Restart-Computer -ComputerName {0} -Force -Wait -For PowerShell' -f $ComputerName)
         Restart-Computer -ComputerName $ComputerName -Force -Wait -For PowerShell

@@ -16,7 +16,7 @@ function Start-Maintenance {
 
         Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
 
-        Write-Debug -Message ('Invoke-WindowsUpdate -ComputerName {0}' -f $ComputerName)
+        Write-Debug -Message ('Invoke-WindowsUpdate -ComputerName ''{0}''' -f $ComputerName)
         Invoke-WindowsUpdate -ComputerName $ComputerName
 
         Write-Debug -Message ('$null = Invoke-CustomScriptBlockCommand -Mode ''PostUpdate'' -ComputerName ''{0}'' -Variables (Get-Variable | Where-Object -FilterScript {{$_ -is [System.Management.Automation.PSVariable]}})' -f $ComputerName)
