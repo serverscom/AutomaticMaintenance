@@ -15,6 +15,11 @@ Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 try {
     Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
+    # Put here code which you want to execute at the Finally step.
+
+    # In the example below, we check if monitoring enabled for the host and, if needed, we turn it back on.
+    # As with the PreRestore step, here we use the $HostDowntime variable to pass downtime objects between step scripts.
+
     $HostDowntime = ($Variables | Where-Object -FilterScript {$_.Name -eq 'HostDowntime'}).Value
     Write-Debug -Message ('$HostDowntime: {0}' -f $HostDowntime)
     $YourFavoriteMonitoringSystemComputerName = ($Variables | Where-Object -FilterScript {$_.Name -eq 'YourFavoriteMonitoringSystemComputerName'}).Value

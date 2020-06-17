@@ -27,10 +27,10 @@ function Get-PendingReboot {
     }
     catch {
         Write-Debug -Message ('ENTER CATCH {0}' -f $MyInvocation.MyCommand.Name)
-    
+
         Write-Debug -Message ('{0}: $PSCmdlet.ThrowTerminatingError($_)' -f $MyInvocation.MyCommand.Name)
         $PSCmdlet.ThrowTerminatingError($_)
-    
+
         Write-Debug -Message ('EXIT CATCH {0}' -f $MyInvocation.MyCommand.Name)
     }
 

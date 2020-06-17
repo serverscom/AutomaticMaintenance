@@ -40,7 +40,7 @@ function Test-WindowsUpdateNeeded {
             $Filter = [scriptblock]::Create($FilterString)
             Write-Debug -Message ('$Filter: ''{0}''' -f $Filter)
         }
-        
+
         Write-Debug -Message ('$UpdateSession = [activator]::CreateInstance([type]::GetTypeFromProgID(''Microsoft.Update.Session'', ''{0}''))' -f $ComputerName)
         $UpdateSession = [activator]::CreateInstance([type]::GetTypeFromProgID('Microsoft.Update.Session', $ComputerName))
         Write-Debug -Message ('$UpdateSession: ''{0}''' -f $UpdateSession)

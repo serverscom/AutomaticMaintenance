@@ -14,6 +14,8 @@ Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 try {
     Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
+    # Put here code which you want to execute at the PreClear step.
+
     Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
 }
 catch {

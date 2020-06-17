@@ -7,7 +7,7 @@ Param (
     [string]$ComputerName,
     [System.Management.Automation.PSVariable[]]$Variables,
     [string]$YourFavoriteMonitoringSystemUserName = 'AutoMaintenanceSvc',
-    [string]$YourFavoriteMonitoringSystemComputerName = 'mon.example.com',
+    [string]$YourFavoriteMonitoringSystemComputerName = 'mon.example.com'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -16,6 +16,13 @@ Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 
 try {
     Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
+
+    # Put here code which you want to execute at the PostClear step.
+
+    # The example below temporarily disables monitoring (sets downtime) of the host in a fictional Your Favorite Monitoring System
+    # Note, that is this fictious monitoring system, we need the downtime object to enable monitoring of the host later.
+    # So in order to keep it, we save it into a variable ($HostDowntime) and pass that variable to the caller function.
+    # Later, on the PreRestore step, we'll use that $HostDowntime object to enable monitoring back.
 
     $CallerName = ($Variables | Where-Object -FilterScript {$_.Name -eq 'CallerName'}).Value
     Write-Debug -Message ('$CallerName = ''{0}''' -f $CallerName)

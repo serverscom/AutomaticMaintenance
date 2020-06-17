@@ -47,11 +47,10 @@ function Invoke-WindowsUpdate {
             $Filter = [scriptblock]::Create($FilterString)
             Write-Debug -Message ('$Filter: ''{0}''' -f $Filter)
         }
-        
+
         [ScriptBlock]$UpdateScriptBlock = {
             $Searcher = New-Object -ComObject Microsoft.Update.Searcher
             $SearchResult = $Searcher.Search($Criteria).Updates
-            $Session = New-Object -ComObject Microsoft.Update.Session
 
             $DesiredUpdates = New-Object -ComObject Microsoft.Update.UpdateColl
             foreach ($Item in $SearchResult) {
@@ -63,10 +62,11 @@ function Invoke-WindowsUpdate {
             }
 
             if ($DesiredUpdates.Count -gt 0) {
+                $Session = New-Object -ComObject Microsoft.Update.Session
                 $Downloader = $Session.CreateUpdateDownloader()
                 $Downloader.Updates = $DesiredUpdates
                 $null = $Downloader.Download()
-    
+
                 $Installer = New-Object -ComObject Microsoft.Update.Installer
                 $Installer.Updates = $DesiredUpdates
                 $null = $Installer.Install()
@@ -81,7 +81,7 @@ function Invoke-WindowsUpdate {
         Write-Debug -Message ('$FilterScriptBlockString = ''$Filter = {{{{{{0}}}}}}'' -f ''{0}''' -f $FilterString)
         $FilterScriptBlockString = '$Filter = {{{0}}}' -f $FilterString
         Write-Debug -Message ('$FilterScriptBlockString = ''{0}''' -f $FilterScriptBlockString)
-        
+
         Write-Debug -Message '$UpdateScriptBlockString = $UpdateScriptBlock.ToString()'
         $UpdateScriptBlockString = $UpdateScriptBlock.ToString()
         Write-Debug -Message ('$UpdateScriptBlockString = ''{0}''' -f $UpdateScriptBlockString)

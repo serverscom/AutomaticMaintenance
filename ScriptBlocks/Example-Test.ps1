@@ -14,8 +14,10 @@ Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 try {
     Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
+    # Put here code which you want to execute at the Test step.
+
     Write-Debug -Message '$true'
-    $true # Really, you should put some commands here instead, which will test your node.
+    $true # Really, you should put some commands here instead, which will test readiness of your node.
 
     Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
 }

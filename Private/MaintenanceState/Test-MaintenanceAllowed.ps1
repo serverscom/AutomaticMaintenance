@@ -1,6 +1,6 @@
 function Test-MaintenanceAllowed {
     #Requires -Version 3.0
-    
+
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     Param (
@@ -11,7 +11,7 @@ function Test-MaintenanceAllowed {
     $ErrorActionPreference = 'Stop'
 
     Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
-    
+
     try {
         Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
