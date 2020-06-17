@@ -15,6 +15,11 @@ Write-Debug -Message ('ENTER {0}' -f $MyInvocation.MyCommand.Name)
 try {
     Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
+    # Put here code which you want to execute at the PreRestore step.
+
+    # The example below enables back monitoring of the host in a fictional Your Favorite Monitoring System.
+    # To remove the downtime from our host, we use a downtime object from the PostClear step ($HostDowntime).
+
     $HostDowntime = ($Variables | Where-Object -FilterScript {$_.Name -eq 'HostDowntime'}).Value
     Write-Debug -Message ('$HostDowntime: {0}' -f $HostDowntime)
     $YourFavoriteMonitoringSystemComputerName = ($Variables | Where-Object -FilterScript {$_.Name -eq 'YourFavoriteMonitoringSystemComputerName'}).Value
