@@ -20,6 +20,7 @@ $ModuleName = ($MyInvocation.MyCommand.Name).Substring(0, ($MyInvocation.MyComma
 [bool]$ModuleWideErrorXMLDump = $true
 [int]$ModuleWideErrorXMLDumpDepth = 5
 
+[bool]$ModuleWideEnableMaintenanceLog = $false
 [string]$ModuleWideMaintenanceLogFilePath = Join-Path -Path $ModulePath -Childpath ('{0}-HostMaintenanceLog.log' -f $ModuleName)
 [string]$ModuleWideMaintenanceLogMutexName = '{0}MaintenanceLogMutex' -f $ModuleName
 [string]$ModuleWideMaintenanceLogFileDelimiter = ';'

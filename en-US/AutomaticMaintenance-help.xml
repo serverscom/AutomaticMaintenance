@@ -212,7 +212,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Invoke-ComputerMaintenance</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>ComputerName</maml:name>
           <maml:Description>
             <maml:para>The name of a computer to process.</maml:para>
@@ -224,19 +224,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>PreventiveLockTimeout</maml:name>
-          <maml:Description>
-            <maml:para>Specifies how often the function will request the lock status of a target host while waiting for it to unlock.</maml:para>
-          </maml:Description>
-          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
-          <dev:type>
-            <maml:name>Int32</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>PreventiveLockThreshold</maml:name>
           <maml:Description>
             <maml:para>Specifies how long the function will wait if a target host is locked by some other function.</maml:para>
@@ -244,6 +232,18 @@
           <command:parameterValue required="true" variableLength="false">TimeSpan</command:parameterValue>
           <dev:type>
             <maml:name>TimeSpan</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>PreventiveLockTimeout</maml:name>
+          <maml:Description>
+            <maml:para>Specifies how often the function will request the lock status of a target host while waiting for it to unlock.</maml:para>
+          </maml:Description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -270,10 +270,21 @@
           </dev:type>
           <dev:defaultValue>False</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>EnableMaintenanceLog</maml:name>
+          <maml:Description>
+            <maml:para>Specifies if maintenance events should be tracked in the `$ModuleWideMaintenanceLogFilePath` file. Disabled by default.</maml:para>
+          </maml:Description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>ComputerName</maml:name>
         <maml:Description>
           <maml:para>The name of a computer to process.</maml:para>
@@ -285,7 +296,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>PreventiveLockThreshold</maml:name>
         <maml:Description>
           <maml:para>Specifies how long the function will wait if a target host is locked by some other function.</maml:para>
@@ -297,7 +308,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>PreventiveLockTimeout</maml:name>
         <maml:Description>
           <maml:para>Specifies how often the function will request the lock status of a target host while waiting for it to unlock.</maml:para>
@@ -325,6 +336,18 @@
         <maml:name>SkipPreventivelyLocked</maml:name>
         <maml:Description>
           <maml:para>Defines if the maintenance process should silently skip a host if it is locked by some other function. Otherwise the function will raise an exception.</maml:para>
+        </maml:Description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>EnableMaintenanceLog</maml:name>
+        <maml:Description>
+          <maml:para>Specifies if maintenance events should be tracked in the `$ModuleWideMaintenanceLogFilePath` file. Disabled by default.</maml:para>
         </maml:Description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
