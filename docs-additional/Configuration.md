@@ -24,11 +24,11 @@ The `Include` attribute defines a collection of objects. Each of those objects m
 
 ## Attributes
 * Name - The name of a host where you want to install updates automatically. Should be unique.
-* Type - A type of a host. Currently, acceptable values are `HV-SCVMM`, `Generic`.
+* Type - A type of a host. Currently, the acceptable values are `HV-SCVMM`, `HV-Vanilla`, `Generic`.
 * UpdateInstallFilter - A filter which is used to filter out unneeded updates, like preview versions etc.
 * Disabled - Settings this attribute to `True` allows you to temporary disable processing of this particular host. Useful when you need to perform some manual maintenance.
 
-The following set of attributes describes step commands (plug-ins):
+The following set of attributes describes plug-ins:
 * PreClearCommands
 * PostClearCommands
 * PreRestoreCommands
@@ -36,7 +36,7 @@ The following set of attributes describes step commands (plug-ins):
 * TestCommands
 * FinallyCommands
 
-Each attribute is usually a name of a PowerShell script, located in a `ScriptBlocks` folder in the module's folder. See more about these commands [here](Step-Commands.md)
+Each attribute is usually a name of a PowerShell script, located in the `$ModuleWideScriptBlocksFolderPath` folder in the module's folder. See more about these commands [here](Plug-ins.md)
 
 ### Workload-specific attributes
 #### HV-SCVMM
@@ -48,6 +48,10 @@ Workload objects have the following attributes:
 * DestinationName - Destination host's name where to move virtual machines.
 * DestinationPath - Local path on the destination host.
 * Filter - Defines a filter which will be used to pick VMs from the source host. For example, if you wish for some VMs not to mirate, but stay at the source host during maintenance, you can filter them out here.
+
+#### HV-Vanilla
+Generally, the same as `HV-SCVMM`, just without the `VMMServerName` attribute.
+* PutInASubfolder - When set to `true`, places vanilla Hyper-V virtual machines in subfolders, named as VMs themselves, therefore mimicking SCVMM behavior. Can be set on both the host and workload levels. When defined on the workload level, rewrites the value defined on the host level. If the attribute is not defined in host configuration, the default value (`$ModuleWideHVVanillaPutInASubfolder`) is used.
 
 ## Configuration testing
 The module exposes the **Get-ComputerMaintenanceConfiguration** function to retrieve a resulting configuration for a host. This function is used by the module itself to build host's configuration. Use it to test your configuration files before deploying them to production.
@@ -107,7 +111,7 @@ Workload            : {@{Path=C:\VMs; DestinationName=SRV05; DestinationPath=D:\
 ```
 
 SRV03 is a stand-alone Hyper-V host, that's why it uses `Example-Template2`, which describes how to maintain Hyper-V hosts in this example infrastructure.
-Note, that `Example-Template2` does not have step commands defined, but the template itself inherits properties from `Example-Template`, that's why we see all those attributes in the configuration. This also gives us `UpdateInstallFilter`.
+Note, that `Example-Template2` does not have plug-ins defined, but the template itself inherits properties from `Example-Template`, that's why we see all those attributes in the configuration. This also gives us `UpdateInstallFilter`.
 
 ### SRV04
 ```
@@ -141,4 +145,4 @@ Workload          : {@{Path=D:\VMs; DestinationName=SRV03; DestinationPath=C:\VM
                     -notlike '*-DontMove'}}
 ```
 
-This host does not use any templates: all its attributes are defined at the host level — that's why it's configuration lacks step commands etc.
+This host does not use any templates: all its attributes are defined at the host level — that's why it's configuration lacks plug-ins etc.

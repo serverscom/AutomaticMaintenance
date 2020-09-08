@@ -10,11 +10,11 @@
     },
     {
         "Name": "SRV03",
-        "Template": "Example-Template2"
+        "Template": "Example-SCVMM"
     },
     {
         "Name": "SRV04",
-        "Template": "Example-Template2",
+        "Template": "Example-SCVMM",
         "MyCustomAttribute": "CustomValue1",
         "PostRestoreCommands": "",
         "Workload": [
@@ -43,6 +43,32 @@
                 "DestinationName": "SRV03",
                 "DestinationPath": "E:\\VMs",
                 "Filter": "$_.Name -notlike '*-DontMove'"
+            }
+        ]
+    },
+    {
+        "Name": "SRV06",
+        "Template": "Example-Hyper-V",
+        "PutInASubfolder": false,
+        "Workload": [
+            {
+                "Path": "D:\\VMs",
+                "DestinationName": "SRV07",
+                "DestinationPath": "D:\\VMs",
+                "Filter": "$_.Name -like '*'"
+            }
+        ]
+    },
+    {
+        "Name": "SRV07",
+        "Template": "Example-Hyper-V",
+        "Workload": [
+            {
+                "Path": "D:\\VMs",
+                "DestinationName": "SRV06",
+                "DestinationPath": "D:\\VMs",
+                "Filter": "$_.Name -like '*'",
+                "PutInASubfolder": true
             }
         ]
     }

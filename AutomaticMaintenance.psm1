@@ -38,6 +38,8 @@ $ModuleName = ($MyInvocation.MyCommand.Name).Substring(0, ($MyInvocation.MyComma
 [string]$ModuleWideInstallUpdateDefaultFilterString = '$_ -like ''*'''
 [string]$ModuleWideUpdateSearchCriteria = 'IsInstalled=0 and IsHidden=0'
 
+[bool]$ModuleWideHVVanillaPutInASubfolder = $true
+
 foreach ($FunctionType in @('Private', 'Public')) {
     $Path = Join-Path -Path $ModulePath -ChildPath ('{0}\*.ps1' -f $FunctionType)
     if (Test-Path -Path $Path) {

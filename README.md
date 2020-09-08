@@ -22,11 +22,12 @@ Under the hood, **Invoke-InfrastructureMaintenance** uses another function to ac
 
 If the detection process (**Test-WindowsUpdateNeeded**) finds available updates, the host maintenance process will start. Otherwise, **Invoke-ComputerMaintenance** skips to the next host.
 
-There's no built-in way to install a specific update, but it is possible by leveraging step commands (see below), since you can execute custom commands and scripts there.
+There's no built-in way to install a specific update, but it is possible by leveraging plug-ins (see below), since you can execute custom commands and scripts there.
 
 ## Host types
-While the module can potentially support machines with various type of workloads, currently there are only two supported types:
+While the module can potentially support machines with various type of workloads, currently there are only three supported types:
 * **HV-SCVMM** - for stand-alone hypervisors (yes, *not* fail-over clusters) managed by SCVMM. Workload movement is provided by the [SCVMReliableMigration](https://github.com/FozzyHosting/SCVMReliableMigration) module.
+* **HV-Vanilla** - for stand-alone hypervisors. Workload movement is provided by the [HVVMReliableMigration](https://github.com/FozzyHosting/HVVMReliableMigration) module.
 * **Generic** - hosts of this type do not need any specific actions to move workload and the only purpose to perform maintenance on them, using this module, is to prevent a situation when all hosts supporting a service are down at the same time.
 
 Note, that failover cluster support was never the goal while developing the module. While it could be incorporated as a workload type, failover clusters have their own [maintenance orchestration mechanism](https://docs.microsoft.com/en-us/windows-server/failover-clustering/cluster-aware-updating) and can already be serviced in a fully-automated manner.
@@ -36,9 +37,9 @@ The module does not specify type-specific modules as requirements, since you mig
 ## Configuration
 The module's main configuration file `AutomaticMaintenance-Hosts.json` contains a list of hosts to process. Read more about the configuration [here](docs-additional/Configuration.md).
 
-## Plug-ins (Step commands)
+## Plug-ins
 You can run your custom scripts in between of the maintenance steps specified above. You can even pass variables from one of them to another!
-Read more about this awesome concept [here](docs-additional/Step-Commands.md).
+Read more about this awesome concept [here](docs-additional/Plug-ins.md).
 
 ## Error processing
 All the module's functions but **Invoke-InfrastructureMaintenance** process errors by raising a terminating exception. **Invoke-InfrastructureMaintenance** writes an error message and a stack trace into an error log (see below).
@@ -64,7 +65,10 @@ The module depends on the following modules:
 * [SplitOutput](https://github.com/exchange12rocks/SplitOutput) - To log debug output.
 
 ### HV-SCVMM
-For the `HV-SCVMM` type, the module uses [SCVMReliableMigration](https://github.com/FozzyHosting/SCVMReliableMigration) to migrate workload between hosts.
+For hosts of the `HV-SCVMM` type, the module uses [SCVMReliableMigration](https://github.com/FozzyHosting/SCVMReliableMigration) to migrate workload between them.
+
+### HV-Vanilla
+For hosts of the `HV-Vanilla` type, the module uses [HVVMReliableMigration](https://github.com/FozzyHosting/HVVMReliableMigration) to migrate workload.
 
 ## Module-wide variables
 There are several variables defined in the .psm1-file, which are used by the module's functions as default values for parameters:
@@ -76,7 +80,7 @@ There are several variables defined in the .psm1-file, which are used by the mod
 
 * `[string]$ModuleWideComputerMaintenanceConfigurationFilePath` - Default value for **Get-ComputerMaintenanceConfiguration**'s `-FilePath` parameter.
 * `[string]$ModuleWideComputerMaintenanceConfigurationTemplatesFilePath` - A path to the templates file.
-* `[string]$ModuleWideScriptBlocksFolderPath` - A path to the folder where files for step commands are located.
+* `[string]$ModuleWideScriptBlocksFolderPath` - A path to the folder where plug-in files are located.
 
 * `[bool]$ModuleWideDebugLog` - Default value for **Invoke-InfrastructureMaintenance**'s `-DebugLog` parameter.  Disabled by default.
 * `[string]$ModuleWideTextLogMutexName` - Default value for **Invoke-InfrastructureMaintenance**'s `-LogMutexName` parameter.
@@ -102,6 +106,8 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[string]$ModuleWideCheckUpdateDefaultFilterString` - A filter which is used to detect new updates. Used if an `UpdateCheckFilter` attribute is not defined in host's configuration.
 * `[string]$ModuleWideInstallUpdateDefaultFilterString` - A filter which is used during updates installation. Used if an `UpdateInstallFilter` attribute is not defined in host's configuration.
 * `[string]$ModuleWideUpdateSearchCriteria` - Criteria for the IUpdateSearcher::Search method (https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nf-wuapi-iupdatesearcher-search)
+
+* `[bool]$ModuleWideHVVanillaPutInASubfolder` - When set to `$true` (default), places vanilla Hyper-V virtual machines in subfolders, named as VMs themselves, therefore mimicking SCVMM behavior. Requires access to WinRM on the target computer and access to the Win32_Directory WMI class.
 
 ## Loading variables from an external source
 All module-wide variables can be redefined with a `Config.ps1` file, located in the module's root folder. Just put variable definitions in there as you would do with any other PowerShell script. You may find an example of a config file `Config-Example.ps1` in the module's root folder.
