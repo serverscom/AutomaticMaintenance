@@ -36,3 +36,5 @@
 [string]$ModuleWideCheckUpdateDefaultFilterString = '$_.Title -notlike ''Definition Update for Windows Defender Antivirus *''' # Defender updates are released constantly and do not require reboot. If we would not exclude them, there would be constant useless workload movement.
 [string]$ModuleWideInstallUpdateDefaultFilterString = '$_ -like ''*'''
 [string]$ModuleWideUpdateSearchCriteria = 'IsInstalled=0 and IsHidden=0'
+
+[bool]$ModuleWideHVVanillaPutInASubfolder = $true

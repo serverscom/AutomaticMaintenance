@@ -12,6 +12,8 @@ function Get-HVWorkloadFilter {
         [Parameter(ParameterSetName = 'ByWLPair')]
         [Parameter(ParameterSetName = 'ByNamePath')]
         [switch]$Restore,
+        [Parameter(ParameterSetName = 'ByWLPair')]
+        [Parameter(ParameterSetName = 'ByNamePath')]
         [string]$Mode
     )
 
@@ -26,6 +28,7 @@ function Get-HVWorkloadFilter {
         Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
         Write-Debug -Message ('$Path = ''{0}''' -f $Path)
         Write-Debug -Message ('$Restore: ''{0}''' -f $Restore)
+        Write-Debug -Message ('$Mode = ''{0}''' -f $Mode)
 
         Write-Debug -Message 'if (-not $WorkloadPair)'
         if (-not $WorkloadPair) {

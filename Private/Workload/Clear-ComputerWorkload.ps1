@@ -45,7 +45,47 @@ function Clear-ComputerWorkload {
                 }
             }
             'HV-Vanilla' {
-                # TODO
+                foreach ($WorkloadPair in $ComputerMaintenanceConfiguration.Workload) {
+                    Write-Debug -Message ('$WorkloadPair: ''{0}''' -f [string]$WorkloadPair)
+
+                    Write-Debug -Message ('$FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode ''{0}''' -f $_)
+                    $FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode $_
+                    Write-Debug -Message ('$FilterData = ''{0}''' -f $FilterData)
+                    Write-Debug -Message '$SourceFilter = $FilterData.Source'
+                    $SourceFilter = $FilterData.Source
+                    Write-Debug -Message ('$SourceFilter = {{{0}}}' -f $SourceFilter)
+                    Write-Debug -Message '$DestinationFilter = $FilterData.Destination'
+                    $DestinationFilter = $FilterData.Destination
+                    Write-Debug -Message ('$DestinationFilter = {{{0}}}' -f $DestinationFilter)
+
+                    Write-Debug -Message '$PutInASubfolderExists = Get-Member -InputObject $WorkloadPair -Name ''PutInASubfolder'''
+                    $PutInASubfolderAttribute = Get-Member -InputObject $WorkloadPair -Name 'PutInASubfolder'
+                    Write-Debug -Message ('$PutInASubfolderAttribute: ''{0}''' -f $PutInASubfolderAttribute)
+                    Write-Debug -Message 'if ($PutInASubfolderAttribute)'
+                    if ($PutInASubfolderAttribute) {
+                        Write-Debug -Message '$ClearComputerWorkloadHVVanillaParameters = @{PutInASubfolder = $WorkloadPair.PutInASubfolder}'
+                        $ClearComputerWorkloadHVVanillaParameters = @{
+                            PutInASubfolder = $WorkloadPair.PutInASubfolder
+                        }
+                    }
+                    else {
+                        Write-Debug -Message '$PutInASubfolderAttribute = Get-Member -InputObject $ComputerMaintenanceConfiguration -Name ''PutInASubfolder'''
+                        $PutInASubfolderAttribute = Get-Member -InputObject $ComputerMaintenanceConfiguration -Name 'PutInASubfolder'
+                        Write-Debug -Message 'if ($PutInASubfolderAttribute)'
+                        if ($PutInASubfolderAttribute) {
+                            Write-Debug -Message '$ClearComputerWorkloadHVVanillaParameters = @{PutInASubfolder = $ComputerMaintenanceConfiguration.PutInASubfolder}'
+                            $ClearComputerWorkloadHVVanillaParameters = @{
+                                PutInASubfolder = $ComputerMaintenanceConfiguration.PutInASubfolder
+                            }
+                        }
+                    }
+                    Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters: ''{0}''' -f ($ClearComputerWorkloadHVVanillaParameters | Out-String))
+
+                    Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
+                    Write-Debug -Message ('$DestinationHostLock.Value: ''{0}''' -f $DestinationHostLock.Value)
+                    Write-Debug -Message ('Clear-ComputerWorkloadHVVanilla -ComputerName ''{0}'' -DestinationVMHostName ''{1}'' -DestinationVMHostPath ''{2}'' -DestinationVMHostLock $DestinationHostLock -SourceFilter {{{3}}} -DestinationFilter {{{4}}} -MaxParallelMigrations {5} @ClearComputerWorkloadHVVanillaParameters' -f $ComputerName, $WorkloadPair.DestinationName, $WorkloadPair.DestinationPath, $SourceFilter, $DestinationFilter, $WorkloadPair.MaxParallelMigrations)
+                    Clear-ComputerWorkloadHVVanilla -ComputerName $ComputerName -DestinationVMHostName $WorkloadPair.DestinationName -DestinationVMHostPath $WorkloadPair.DestinationPath -DestinationVMHostLock $DestinationHostLock -SourceFilter $SourceFilter -DestinationFilter $DestinationFilter -MaxParallelMigrations $WorkloadPair.MaxParallelMigrations @ClearComputerWorkloadHVVanillaParameters
+                }
             }
             'SCDPM' {
                 # TODO
