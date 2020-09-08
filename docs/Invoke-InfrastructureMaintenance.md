@@ -8,22 +8,24 @@ schema: 2.0.0
 # Invoke-InfrastructureMaintenance
 
 ## SYNOPSIS
+
 Use this function to invoke maintenance on all hosts defined in the hosts configuration file.
 
 ## SYNTAX
 
 ```
-Invoke-InfrastructureMaintenance [[-LogErrorFilePath] <String>] [[-LogFilePathTemplate] <String>]
- [[-LogMutexName] <String>] [-DebugLog] [<CommonParameters>]
+Invoke-InfrastructureMaintenance [-LogErrorFilePath <String>] [-LogFilePathTemplate <String>] [-LogMutexName <String>] [-DebugLog] [-FailOnPreviousFailure] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
+
 The function performs maintenance on all hosts defined in the hosts configuration files, one by one.
 Its main purpose is to be executed from Task Scheduler. We do not recommend to execute this function from an orchestration/configuration management system (Ansible, Chef, System Center Orchestrator etc.) - use **Invoke-ComputerMaintenance** for that.
 
 ## EXAMPLES
 
 ### Example 1
+
 ```powershell
 PS C:\> Invoke-InfrastructureMaintenance
 ```
@@ -31,6 +33,7 @@ PS C:\> Invoke-InfrastructureMaintenance
 Performs maintenance tasks on all hosts defined in the main configuration file.
 
 ### Example 2
+
 ```powershell
 PS C:\> Invoke-InfrastructureMaintenance -DebugLog
 ```
@@ -40,6 +43,7 @@ Performs maintenance tasks on all hosts defined in the main configuration file, 
 ## PARAMETERS
 
 ### -DebugLog
+
 Specifies if the function should log maintenance process in details through the debug log.
 
 ```yaml
@@ -55,6 +59,7 @@ Accept wildcard characters: False
 ```
 
 ### -LogErrorFilePath
+
 A path to the error log file.
 
 ```yaml
@@ -63,13 +68,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -LogFilePathTemplate
+
 A template used for debug log file paths.
 
 ```yaml
@@ -78,13 +84,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -LogMutexName
+
 The name of a mutex used to access a debug log file object.
 
 ```yaml
@@ -93,13 +100,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -FailOnPreviousFailure
+
 Defines if the maintenance process should not start when an error log exists.
 
 ```yaml
@@ -115,7 +123,8 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (<http://go.microsoft.com/fwlink/?LinkID=113216>).
 
 ## INPUTS
 
@@ -124,6 +133,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## OUTPUTS
 
 ### System.Object
+
 ## NOTES
 
 ## RELATED LINKS
