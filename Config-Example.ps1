@@ -33,7 +33,11 @@
 [System.TimeSpan]$ModuleWideInstallUpdateThreshold = New-Object -TypeName 'System.TimeSpan' -ArgumentList @(1, 0, 0)
 [string]$ModuleWideInstallUpdateTaskName = 'AMWindowsUpdate'
 [string]$ModuleWideInstallUpdateTaskDescription = 'Automatic Maintenance Windows Update Installer Task'
-[string]$ModuleWideCheckUpdateDefaultFilterString = '$_.Title -notlike ''Definition Update for Windows Defender Antivirus *''' # Defender updates are released constantly and do not require reboot. If we would not exclude them, there would be constant useless workload movement.
+[string]$ModuleWideCheckUpdateDefaultFilterString = '$_.Title -notlike ''*Update * Defender Antivirus *''' # Defender updates are released constantly and do not require reboot. If we would not exclude them, there would be constant useless workload movement.
+# Other good exclusions are:
+# -and $_.Title -notlike ''*Preview*''
+# -and $_.Title -notlike ''*Silverlight*''
+# -and $_.Title -notlike ''* Security Only *''
 [string]$ModuleWideInstallUpdateDefaultFilterString = '$_ -like ''*'''
 [string]$ModuleWideUpdateSearchCriteria = 'IsInstalled=0 and IsHidden=0'
 
