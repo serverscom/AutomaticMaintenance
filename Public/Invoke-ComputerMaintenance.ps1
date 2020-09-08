@@ -9,7 +9,8 @@ function Invoke-ComputerMaintenance {
         [int]$PreventiveLockTimeout = $ModuleWidePreventiveLockTimeout,
         [System.TimeSpan]$PreventiveLockThreshold = $ModuleWidePreventiveLockThreshold,
         [switch]$SkipNotLockable = $ModuleWideSkipNotLockable,
-        [switch]$SkipPreventivelyLocked = $ModuleWideSkipPreventivelyLocked
+        [switch]$SkipPreventivelyLocked = $ModuleWideSkipPreventivelyLocked,
+        [switch]$EnableMaintenanceLog = $ModuleWideEnableMaintenanceLog
     )
 
     $ErrorActionPreference = 'Stop'
@@ -24,6 +25,7 @@ function Invoke-ComputerMaintenance {
         Write-Debug -Message ('$PreventiveLockThreshold: ''{0}''' -f [string]$PreventiveLockThreshold)
         Write-Debug -Message ('$SkipNotLockable: ''{0}''' -f $SkipNotLockable)
         Write-Debug -Message ('$SkipPreventivelyLocked: ''{0}''' -f $SkipPreventivelyLocked)
+        Write-Debug -Message ('$EnableMaintenanceLog = ${0}' -f $EnableMaintenanceLog)
 
         Write-Debug -Message ('$IsMaintenanceAllowed = Test-MaintenanceAllowed -ComputerName ''{0}''' -f $ComputerName)
         $IsMaintenanceAllowed = Test-MaintenanceAllowed -ComputerName $ComputerName
@@ -135,8 +137,14 @@ function Invoke-ComputerMaintenance {
 
                     Write-Debug -Message ('Start-Maintenance -ComputerName ''{0}''' -f $ComputerName)
                     Start-Maintenance -ComputerName $ComputerName
-                    Write-Debug -Message ('Set-MaintenanceState -ComputerName ''{0}''' -f $ComputerName)
-                    Set-MaintenanceState -ComputerName $ComputerName
+
+                    Write-Debug -Message ('$EnableMaintenanceLog = ${0}' -f $EnableMaintenanceLog)
+                    Write-Debug -Message 'if ($EnableMaintenanceLog)'
+                    if ($EnableMaintenanceLog) {
+                        Write-Debug -Message ('Set-MaintenanceState -ComputerName ''{0}''' -f $ComputerName)
+                        Set-MaintenanceState -ComputerName $ComputerName
+                    }
+
                     Write-Debug -Message ('$TestComputerResult = Test-Computer -ComputerName ''{0}''' -f $ComputerName)
                     $TestComputerResult = Test-Computer -ComputerName $ComputerName
                     Write-Debug -Message ('$TestComputerResult = ''{0}''' -f $TestComputerResult)

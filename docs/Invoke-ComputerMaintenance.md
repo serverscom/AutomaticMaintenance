@@ -13,8 +13,7 @@ The function executes all maintenance steps on a single host.
 ## SYNTAX
 
 ```
-Invoke-ComputerMaintenance [-ComputerName] <String> [[-PreventiveLockTimeout] <Int32>]
- [[-PreventiveLockThreshold] <TimeSpan>] [<CommonParameters>]
+Invoke-ComputerMaintenance -ComputerName <String> [-PreventiveLockTimeout <Int32>] [-PreventiveLockThreshold <TimeSpan>] [-SkipNotLockable] [-SkipPreventivelyLocked] [-EnableMaintenanceLog] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -48,7 +47,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -63,7 +62,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -78,7 +77,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -101,6 +100,21 @@ Accept wildcard characters: False
 
 ### -SkipPreventivelyLocked
 Defines if the maintenance process should silently skip a host if it is locked by some other function. Otherwise the function will raise an exception.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -EnableMaintenanceLog
+Specifies if maintenance events should be tracked in the `$ModuleWideMaintenanceLogFilePath` file. Disabled by default.
 
 ```yaml
 Type: SwitchParameter

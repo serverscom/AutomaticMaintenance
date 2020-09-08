@@ -78,13 +78,14 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[string]$ModuleWideComputerMaintenanceConfigurationTemplatesFilePath` - A path to the templates file.
 * `[string]$ModuleWideScriptBlocksFolderPath` - A path to the folder where files for step commands are located.
 
-* `[bool]$ModuleWideDebugLog` - Default value for **Invoke-InfrastructureMaintenance**'s `-DebugLog` parameter.
+* `[bool]$ModuleWideDebugLog` - Default value for **Invoke-InfrastructureMaintenance**'s `-DebugLog` parameter.  Disabled by default.
 * `[string]$ModuleWideTextLogMutexName` - Default value for **Invoke-InfrastructureMaintenance**'s `-LogMutexName` parameter.
 * `[string]$ModuleWideErrorLogMutexName` - The name of a mutex used to access an error log file object.
 * `[bool]$ModuleWideFailOnPreviousFailure` - Default value for **Invoke-InfrastructureMaintenance**'s `-FailOnPreviousFailure` parameter.
 * `[bool]$ModuleWideErrorXMLDump` - Enables an additional error dump in the XML format: the error object exports through the `Export-CliXml` cmdlet.
 * `[int]$ModuleWideErrorXMLDumpDepth` - When `$ModuleWideErrorXMLDump` is set to `$true`, use this variable to tune the object's depth.
 
+* `[string]$ModuleWideEnableMaintenanceLog` - Default value for **Invoke-ComputerMaintenance**'s `-EnableMaintenanceLog` parameter. Disabled by default.
 * `[string]$ModuleWideMaintenanceLogFilePath` - A path to the maintenance track log file.
 * `[string]$ModuleWideMaintenanceLogMutexName` - The name of a mutex used to access the maintenance track log file object.
 * `[string]$ModuleWideMaintenanceLogFileDelimiter` - A delimiter used to split columns in the maintenance track log file.
