@@ -29,12 +29,12 @@ function Invoke-ComputerMaintenance {
 
         Write-Debug -Message ('$IsMaintenanceAllowed = Test-MaintenanceAllowed -ComputerName ''{0}''' -f $ComputerName)
         $IsMaintenanceAllowed = Test-MaintenanceAllowed -ComputerName $ComputerName
-        Write-Debug -Message ('$IsMaintenanceAllowed: ''{0}''' -f $IsMaintenanceAllowed)
+        Write-Debug -Message ('$IsMaintenanceAllowed = ${0}' -f $IsMaintenanceAllowed)
         Write-Debug -Message 'if ($IsMaintenanceAllowed)'
         if ($IsMaintenanceAllowed) {
             Write-Debug -Message ('$IsMaintenanceNeeded = Test-MaintenanceNeeded -ComputerName ''{0}''' -f $ComputerName)
             $IsMaintenanceNeeded = Test-MaintenanceNeeded -ComputerName $ComputerName
-            Write-Debug -Message ('$IsMaintenanceNeeded: ''{0}''' -f $IsMaintenanceNeeded)
+            Write-Debug -Message ('$IsMaintenanceNeeded = ${0}' -f $IsMaintenanceNeeded)
             Write-Debug -Message 'if ($IsMaintenanceNeeded)'
             if ($IsMaintenanceNeeded) {
                 Write-Debug -Message '$CallerName = Get-LockCallerName'
@@ -118,7 +118,8 @@ function Invoke-ComputerMaintenance {
 
                     Write-Debug -Message '$DestinationHostLock = $null'
                     $DestinationHostLock = $null
-                    Write-Debug -Message ('$ComputerWorkload = Clear-ComputerWorkload -ComputerName {0} -DestinationHostLock {1}' -f $ComputerName, $DestinationHostLock)
+                    Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
+                    Write-Debug -Message ('$ComputerWorkload = Clear-ComputerWorkload -ComputerName ''{0}'' -DestinationHostLock ([ref]$DestinationHostLock)' -f $ComputerName)
                     $ComputerWorkload = Clear-ComputerWorkload -ComputerName $ComputerName -DestinationHostLock ([ref]$DestinationHostLock)
                     Write-Debug -Message ('$ComputerWorkload: ''{0}''' -f [string]$ComputerWorkload)
                     Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
