@@ -18,6 +18,10 @@ function Invoke-ComputerRestart {
 
         Write-Debug -Message ('Restart-Computer -ComputerName {0} -Force -Wait -For PowerShell' -f $ComputerName)
         Restart-Computer -ComputerName $ComputerName -Force -Wait -For PowerShell
+        <#
+        Restart-Computer only works on computers running Windows and requires WinRM and WMI to shutdown a system, including the local system.
+        Restart-Computer uses the Win32Shutdown method of the Windows Management Instrumentation (WMI) Win32_OperatingSystem class. This method requires the SeShutdownPrivilege privilege be enabled for the user account used to restart the machine.
+        #>
 
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
     }

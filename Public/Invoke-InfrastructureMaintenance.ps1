@@ -94,6 +94,18 @@ function Invoke-InfrastructureMaintenance {
                     $LogScriptBlock = [scriptblock]::Create(('Write-SimpleTextLog -Path ''{0}'' -MutexName ''{1}''' -f $LogFilePath, $LogMutexName))
                     Write-Debug -Message ('$LogScriptBlock = {0}' -f [string]$LogScriptBlock)
 
+                    $InvokeComputerMaintenanceParameters = @{
+                        ComputerName = $ComputerName
+                    }
+
+                    if ($Session) {
+                        $InvokeComputerMaintenanceParameters.Add('Session', $Session)
+                    }
+
+                    if ($Protocol) {
+                        $InvokeComputerMaintenanceParameters.Add('Protocol', $Protocol)
+                    }
+
                     Write-Debug -Message ('$DebugLog: ''{0}''' -f [string]$DebugLog)
                     Write-Debug -Message 'if ($DebugLog)'
                     if ($DebugLog) {
@@ -102,13 +114,13 @@ function Invoke-InfrastructureMaintenance {
                         Write-Debug -Message '$global:DebugPreference = ''Continue'''
                         $global:DebugPreference = 'Continue'
                         Write-Debug -Message ('Invoke-ComputerMaintenance -ComputerName ''{0}'' 5>&1 | Split-Output -ScriptBlock {{{1}}} -Mode Debug' -f $ComputerName, $LogScriptBlock)
-                        Invoke-ComputerMaintenance -ComputerName $ComputerName 5>&1 | Split-Output -ScriptBlock $LogScriptBlock -Mode Debug
+                        Invoke-ComputerMaintenance @InvokeComputerMaintenanceParameters 5>&1 | Split-Output -ScriptBlock $LogScriptBlock -Mode Debug
                     }
                     else {
                         Write-Debug -Message '$CurrentDebugPreference = $null'
                         $CurrentDebugPreference = $null
                         Write-Debug -Message ('Invoke-ComputerMaintenance -ComputerName ''{0}''' -f $ComputerName)
-                        Invoke-ComputerMaintenance -ComputerName $ComputerName
+                        Invoke-ComputerMaintenance @InvokeComputerMaintenanceParameters
                     }
 
                     Write-Debug -Message ('$null = $ProcessedComputers.Add(''{0}'')' -f $ComputerName)

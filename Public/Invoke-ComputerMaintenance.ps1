@@ -8,7 +8,9 @@ function Invoke-ComputerMaintenance {
         [System.TimeSpan]$PreventiveLockThreshold = $ModuleWidePreventiveLockThreshold,
         [switch]$SkipNotLockable = $ModuleWideSkipNotLockable,
         [switch]$SkipPreventivelyLocked = $ModuleWideSkipPreventivelyLocked,
-        [switch]$EnableMaintenanceLog = $ModuleWideEnableMaintenanceLog
+        [switch]$EnableMaintenanceLog = $ModuleWideEnableMaintenanceLog,
+        [string]$Protocol,
+        [System.Management.Automation.Runspaces.PSSession]$Session
     )
 
     $ErrorActionPreference = 'Stop'
@@ -36,8 +38,24 @@ function Invoke-ComputerMaintenance {
             Write-Debug -Message '$DestinationHostLock = $null'
             $DestinationHostLock = $null
             Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
-            Write-Debug -Message ('$PendingReboot = Test-PendingReboot -ComputerName ''{0}'' -Detailed' -f $ComputerName)
-            $PendingReboot = Test-PendingReboot -ComputerName $ComputerName -Detailed
+            $PendingReboot = switch ($Protocol) {
+                'WinRM' {
+                    $Function = Get-Command -Module PendingReboot -Name 'Test-PendingReboot'
+                    $ScriptBlock = {
+                        Param (
+                            $Function
+                        )
+
+                        Set-Item -Path 'Function:\Test-PendingReboot' -Value $Function
+                        Test-PendingReboot -Detailed
+                    }
+                    Invoke-Command -Session $Session -ScriptBlock $ScriptBlock -ArgumentList @($Function)
+                }
+                Default {
+                    Write-Debug -Message ('Test-PendingReboot -ComputerName ''{0}'' -Detailed' -f $ComputerName)
+                    Test-PendingReboot -ComputerName $ComputerName -Detailed
+                }
+            }
             Write-Debug -Message ('$PendingReboot: ''{0}''' -f $PendingReboot)
             Write-Debug -Message ('$PendingReboot.PendingFileRenameOperationsValue: ''{0}''' -f [string]$PendingReboot.PendingFileRenameOperationsValue)
             Write-Debug -Message ('$PendingReboot.ComponentBasedServicing: ''{0}''' -f $PendingReboot.ComponentBasedServicing)

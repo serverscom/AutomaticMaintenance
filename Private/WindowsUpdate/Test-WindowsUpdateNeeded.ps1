@@ -8,7 +8,9 @@ function Test-WindowsUpdateNeeded {
         [string]$ComputerName,
         [scriptblock]$Filter,
         [string]$DefaultFilterString = $ModuleWideCheckUpdateDefaultFilterString,
-        [string]$Criteria = $ModuleWideUpdateSearchCriteria
+        [string]$Criteria = $ModuleWideUpdateSearchCriteria,
+        [string]$Protocol,
+        [System.Management.Automation.Runspaces.PSSession]$Session
     )
 
     $ErrorActionPreference = 'Stop'
@@ -41,25 +43,43 @@ function Test-WindowsUpdateNeeded {
             Write-Debug -Message ('$Filter: ''{0}''' -f $Filter)
         }
 
-        Write-Debug -Message ('$UpdateSession = [activator]::CreateInstance([type]::GetTypeFromProgID(''Microsoft.Update.Session'', ''{0}''))' -f $ComputerName)
-        $UpdateSession = [activator]::CreateInstance([type]::GetTypeFromProgID('Microsoft.Update.Session', $ComputerName))
-        Write-Debug -Message ('$UpdateSession: ''{0}''' -f $UpdateSession)
-        Write-Debug -Message '$UpdateSearcher = $UpdateSession.CreateUpdateSearcher()'
-        $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
-        Write-Debug -Message ('$UpdateSearcher: ''{0}''' -f $UpdateSearcher)
-        Write-Debug -Message ('$SearchResult = $UpdateSearcher.Search(''{0}'')' -f $Criteria)
-        $SearchResult = $UpdateSearcher.Search($Criteria)
-        Write-Debug -Message ('$SearchResult: ''{0}''' -f $SearchResult)
-
         Write-Debug -Message '$Updates2Install = $false'
         $Updates2Install = $false
 
-        Write-Debug -Message ('$SearchResult.Updates.Count: {0}' -f $SearchResult.Updates.Count)
-        Write-Debug -Message 'if ($SearchResult.Updates.Count -gt 0)'
-        if ($SearchResult.Updates.Count -gt 0) {
-            Write-Debug -Message '$Updates = $SearchResult.Updates'
-            $Updates = $SearchResult.Updates
-            Write-Debug -Message ('$Updates: ''{0}''' -f [string]$Updates)
+        $ScriptBlock = {
+            Param (
+                $ComputerName,
+                $Criteria
+            )
+            Write-Debug -Message ('$UpdateSession = [activator]::CreateInstance([type]::GetTypeFromProgID(''Microsoft.Update.Session'', ''{0}''))' -f $ComputerName)
+            $UpdateSession = [activator]::CreateInstance([type]::GetTypeFromProgID('Microsoft.Update.Session', $ComputerName))
+            Write-Debug -Message ('$UpdateSession: ''{0}''' -f $UpdateSession)
+            Write-Debug -Message '$UpdateSearcher = $UpdateSession.CreateUpdateSearcher()'
+            $UpdateSearcher = $UpdateSession.CreateUpdateSearcher()
+            Write-Debug -Message ('$UpdateSearcher: ''{0}''' -f $UpdateSearcher)
+            Write-Debug -Message ('$SearchResult = $UpdateSearcher.Search(''{0}'')' -f $Criteria)
+            $SearchResult = $UpdateSearcher.Search($Criteria)
+            Write-Debug -Message ('$SearchResult: ''{0}''' -f $SearchResult)
+
+            Write-Debug -Message ('$SearchResult.Updates.Count: {0}' -f $SearchResult.Updates.Count)
+            Write-Debug -Message 'if ($SearchResult.Updates.Count -gt 0)'
+            if ($SearchResult.Updates.Count -gt 0) {
+                Write-Debug -Message '$Updates = $SearchResult.Updates'
+                $SearchResult.Updates
+            }
+        }
+
+        $Updates = switch ($Protocol) {
+            'WinRM' {
+                Invoke-Command -Session $Session -ScriptBlock $ScriptBlock -ArgumentList @('localhost', $Criteria)
+            }
+            Default {
+                &$ScriptBlock -ComputerName $ComputerName -Criteria $Criteria
+            }
+        }
+
+        Write-Debug -Message ('$Updates: ''{0}''' -f [string]$Updates)
+        if ($Updates) {
             foreach ($Item in $Updates) {
                 Write-Debug -Message ('$Item: ''{0}''' -f $Item.Title)
                 Write-Debug -Message ('$Item = $Item | Where-Object -FilterScript {0}' -f $Filter)
