@@ -5,6 +5,7 @@ function Restore-ComputerWorkload {
     Param (
         [Parameter(Mandatory)]
         [string]$ComputerName,
+        [Parameter(Mandatory)]
         [ref]$DestinationHostLock
     )
 
@@ -16,6 +17,8 @@ function Restore-ComputerWorkload {
         Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
         Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
+        Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
+        Write-Debug -Message ('$DestinationHostLock.Value: ''{0}''' -f $DestinationHostLock.Value)
 
         Write-Debug -Message ('$ComputerMaintenanceConfiguration = Get-ComputerMaintenanceConfiguration -ComputerName ''{0}''' -f $ComputerName)
         $ComputerMaintenanceConfiguration = Get-ComputerMaintenanceConfiguration -ComputerName $ComputerName
@@ -38,8 +41,10 @@ function Restore-ComputerWorkload {
                     $DestinationFilter = $FilterData.Destination
                     Write-Debug -Message ('$DestinationFilter = {{{0}}}' -f $DestinationFilter)
 
-                    Write-Debug -Message ('$null = Clear-ComputerWorkloadHVSCVMM -ComputerName ''{0}'' -DestinationVMHostName ''{1}'' -DestinationVMHostPath ''{2}'' -DestinationVMHostLock ([ref]$DestinationHostLock) -SourceFilter {{{3}}} -DestinationFilter {{{4}}} -MaxParallelMigrations {5}' -f $WorkloadPair.DestinationName, $ComputerName, $WorkloadPair.Path, $SourceFilter, $DestinationFilter, $WorkloadPair.MaxParallelMigrations)
-                    $null = Clear-ComputerWorkloadHVSCVMM -ComputerName $WorkloadPair.DestinationName -DestinationVMHostName $ComputerName -DestinationVMHostPath $WorkloadPair.Path -DestinationVMHostLock ([ref]$DestinationHostLock) -SourceFilter $SourceFilter -DestinationFilter $DestinationFilter -MaxParallelMigrations $WorkloadPair.MaxParallelMigrations
+                    Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
+                    Write-Debug -Message ('$DestinationHostLock.Value: ''{0}''' -f $DestinationHostLock.Value)
+                    Write-Debug -Message ('$null = Clear-ComputerWorkloadHVSCVMM -ComputerName ''{0}'' -DestinationVMHostName ''{1}'' -DestinationVMHostPath ''{2}'' -DestinationVMHostLock $DestinationHostLock -SourceFilter {{{3}}} -DestinationFilter {{{4}}} -MaxParallelMigrations {5}' -f $WorkloadPair.DestinationName, $ComputerName, $WorkloadPair.Path, $SourceFilter, $DestinationFilter, $WorkloadPair.MaxParallelMigrations)
+                    $null = Clear-ComputerWorkloadHVSCVMM -ComputerName $WorkloadPair.DestinationName -DestinationVMHostName $ComputerName -DestinationVMHostPath $WorkloadPair.Path -DestinationVMHostLock $DestinationHostLock -SourceFilter $SourceFilter -DestinationFilter $DestinationFilter -MaxParallelMigrations $WorkloadPair.MaxParallelMigrations
                 }
             }
             'HV-Vanilla' {
@@ -103,8 +108,8 @@ function Restore-ComputerWorkload {
 
                     Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
                     Write-Debug -Message ('$DestinationHostLock.Value: ''{0}''' -f $DestinationHostLock.Value)
-                    Write-Debug -Message ('Clear-ComputerWorkloadHVVanilla -ComputerName ''{0}'' -DestinationVMHostName ''{1}'' -DestinationVMHostPath ''{2}'' -DestinationVMHostLock ([ref]$DestinationHostLock) @ClearComputerWorkloadHVVanillaParameters' -f $WorkloadPair.DestinationName, $ComputerName, $WorkloadPair.Path)
-                    $null = Clear-ComputerWorkloadHVVanilla -ComputerName $WorkloadPair.DestinationName -DestinationVMHostName $ComputerName -DestinationVMHostPath $WorkloadPair.Path -DestinationVMHostLock ([ref]$DestinationHostLock) @ClearComputerWorkloadHVVanillaParameters
+                    Write-Debug -Message ('$null = Clear-ComputerWorkloadHVVanilla -ComputerName ''{0}'' -DestinationVMHostName ''{1}'' -DestinationVMHostPath ''{2}'' -DestinationVMHostLock $DestinationHostLock @ClearComputerWorkloadHVVanillaParameters' -f $WorkloadPair.DestinationName, $ComputerName, $WorkloadPair.Path)
+                    $null = Clear-ComputerWorkloadHVVanilla -ComputerName $WorkloadPair.DestinationName -DestinationVMHostName $ComputerName -DestinationVMHostPath $WorkloadPair.Path -DestinationVMHostLock $DestinationHostLock @ClearComputerWorkloadHVVanillaParameters
                 }
             }
             'SCDPM' {

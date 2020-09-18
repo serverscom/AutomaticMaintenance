@@ -83,8 +83,8 @@ function Clear-ComputerWorkloadHVVanilla {
             if (-not ($DestinationVMHostLock.Value)) {
                 Write-Debug -Message ('$DestinationVMHostLock.Value = Lock-HostResource -ComputerName {0} -CallerName {1}' -f $DestinationVMHostName, $CallerName)
                 $DestinationVMHostLock.Value = Lock-HostResource -ComputerName $DestinationVMHostName -CallerName $CallerName
-                Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
-                Write-Debug -Message ('$DestinationHostLock.Value: ''{0}''' -f $DestinationHostLock.Value)
+                Write-Debug -Message ('$DestinationVMHostLock: ''{0}''' -f $DestinationVMHostLock)
+                Write-Debug -Message ('$DestinationVMHostLock.Value: ''{0}''' -f $DestinationVMHostLock.Value)
             }
             Write-Debug -Message ('$SourceVMs: ''{0}''' -f [string]$SourceVMs.Name)
 
