@@ -67,7 +67,7 @@ There are three types log files:
 
 * An error log file (`AutomaticMaintenance-Error.log`).
 * Debug log files: Invoke-ComputerMaintenance function will write all executed commands into separate log-files - one per host (`AutomaticMaintenance-<Host Name>-<Current Date>.log`).
-* Maintenance track log file. Its main purpose is to let you keep a track of when which host has been maintained (`AutomaticMaintenance-HostMaintenanceLog.log`).
+* Maintenance track log file. Its main purpose is to let you keep a track of when which host has been maintained (`AutomaticMaintenance-HostMaintenanceLog.log`). You can turn it off by setting the module configuration variable `$ModuleWideEnableMaintenanceLog` to `$false`.
 
 ## Dependencies
 
