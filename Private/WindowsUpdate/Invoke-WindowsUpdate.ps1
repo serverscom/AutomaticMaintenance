@@ -123,7 +123,7 @@ function Invoke-WindowsUpdate {
         $Action = $Task.Actions.Create(0)
         Write-Debug -Message '$Action.Path = ''powershell'''
         $Action.Path = 'powershell'
-        Write-Debug -Message ('$Action.Arguments = ''-NoLogo -NoProfile -NonInteractive -EncodedCommand {{0}}'' -f {0}' -f $ConvertedScriptBlock)
+        Write-Debug -Message ('$Action.Arguments = ''-NoLogo -NoProfile -NonInteractive -EncodedCommand {{0}}'' -f ''{0}''' -f $ConvertedScriptBlock)
         $Action.Arguments = '-NoLogo -NoProfile -NonInteractive -EncodedCommand {0}' -f $ConvertedScriptBlock
 
         Write-Debug -Message '$Task.Principal.RunLevel = 1'
@@ -131,12 +131,13 @@ function Invoke-WindowsUpdate {
 
         Write-Debug -Message ('$Task.XmlText: {0}' -f [string]$Task.XmlText)
 
-        Write-Debug -Message ('$Scheduler.Connect({0})' -f $ComputerName)
+        Write-Debug -Message ('$Scheduler.Connect(''{0}'')' -f $ComputerName)
         $Scheduler.Connect($ComputerName)
         Write-Debug -Message '$RootFolder = $Scheduler.GetFolder(''\'')'
         $RootFolder = $Scheduler.GetFolder('\')
+        Write-Debug -Message ('$RootFolder: ''{0}''' -f $RootFolder | Out-String)
 
-        Write-Debug -Message ('$RunningTask = $Scheduler.GetRunningTasks(0) | Where-Object {{$_.Name -eq {0}}}' -f $TaskName)
+        Write-Debug -Message ('$RunningTask = $Scheduler.GetRunningTasks(0) | Where-Object {{$_.Name -eq ''{0}''}}' -f $TaskName)
         $RunningTask = $Scheduler.GetRunningTasks(0) | Where-Object {$_.Name -eq $TaskName}
         Write-Debug -Message ('$RunningTask: {0}' -f [string]$RunningTask.Name)
         Write-Debug -Message 'if ($RunningTask)'
