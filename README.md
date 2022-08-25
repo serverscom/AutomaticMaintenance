@@ -1,6 +1,8 @@
 # AutomaticMaintenance
+
 The purpose of the module is to orchestrate Windows update installation and related tasks on a bunch of network hosts.
 The module implements the following workflow:
+
 1. Checks if maintenance is needed for a computer.
 2. Removes all workload from that host.
 3. Performs maintenance tasks (updates installation).
@@ -16,17 +18,22 @@ The main function you need from this module is [**Invoke-InfrastructureMaintenan
 Under the hood, **Invoke-InfrastructureMaintenance** uses another function to actually perform maintenance on each host — [**Invoke-ComputerMaintenance**](docs/Invoke-ComputerMaintenance.md). If you want to use an external orchestration/configuration management system (Ansible, Puppet etc.), configure it to execute **Invoke-ComputerMaintenance**, not **Invoke-InfrastructureMaintenance**.
 
 ## Update detection and installation
+
 **Invoke-ComputerMaintenance** uses the standard Windows Update API to detect and install updates. That means that to make updates available for a host, you have to make them available at WSUS or use direct connection to Microsoft Update. But you can exclude some updates from installation/detection:
+
 * Use the `UpdateInstallFilter` configuration attribute (or the `$ModuleWideInstallUpdateDefaultFilterString` module configuration variable) to specify filter for updates installation.
 * Use the `UpdateCheckFilter` configuration attribute (or the `$ModuleWideCheckUpdateDefaultFilterString` module configuration variable) to specify filter for updates detection.
 
 If the detection process (**Test-WindowsUpdateNeeded**) finds available updates, the host maintenance process will start. Otherwise, **Invoke-ComputerMaintenance** skips to the next host.
 
-There's no built-in way to install a specific update, but it is possible by leveraging step commands (see below), since you can execute custom commands and scripts there.
+There's no built-in way to install a specific update, but it is possible by leveraging plug-ins (see below), since you can execute custom commands and scripts there.
 
 ## Host types
-While the module can potentially support machines with various type of workloads, currently there are only two supported types:
+
+While the module can potentially support machines with various type of workloads, currently there are only three supported types:
+
 * **HV-SCVMM** - for stand-alone hypervisors (yes, *not* fail-over clusters) managed by SCVMM. Workload movement is provided by the [SCVMReliableMigration](https://github.com/FozzyHosting/SCVMReliableMigration) module.
+* **HV-Vanilla** - for stand-alone hypervisors. Workload movement is provided by the [HVVMReliableMigration](https://github.com/FozzyHosting/HVVMReliableMigration) module.
 * **Generic** - hosts of this type do not need any specific actions to move workload and the only purpose to perform maintenance on them, using this module, is to prevent a situation when all hosts supporting a service are down at the same time.
 
 Note, that failover cluster support was never the goal while developing the module. While it could be incorporated as a workload type, failover clusters have their own [maintenance orchestration mechanism](https://docs.microsoft.com/en-us/windows-server/failover-clustering/cluster-aware-updating) and can already be serviced in a fully-automated manner.
@@ -34,39 +41,53 @@ Note, that failover cluster support was never the goal while developing the modu
 The module does not specify type-specific modules as requirements, since you might use it for one type of hosts but not for another. Just bear in mind that you still will need those modules to service particular types of hosts.
 
 ## Configuration
+
 The module's main configuration file `AutomaticMaintenance-Hosts.json` contains a list of hosts to process. Read more about the configuration [here](docs-additional/Configuration.md).
 
-## Plug-ins (Step commands)
+## Plug-ins
+
 You can run your custom scripts in between of the maintenance steps specified above. You can even pass variables from one of them to another!
-Read more about this awesome concept [here](docs-additional/Step-Commands.md).
+Read more about this awesome concept [here](docs-additional/Plug-ins.md).
 
 ## Error processing
+
 All the module's functions but **Invoke-InfrastructureMaintenance** process errors by raising a terminating exception. **Invoke-InfrastructureMaintenance** writes an error message and a stack trace into an error log (see below).
 
 By default, if you run **Invoke-InfrastructureMaintenance** and there is an error log from a previous crash, it will stop. You can configure this behaviour with the `$ModuleWideFailOnPreviousFailure` variable.
 
 ## Exported functions
+
 * [Get-ComputerMaintenanceConfiguration](docs/Get-ComputerMaintenanceConfiguration.md)
 * [Invoke-ComputerMaintenance](docs/Invoke-ComputerMaintenance.md)
 * [Invoke-InfrastructureMaintenance](docs/Invoke-InfrastructureMaintenance.md)
 
 ## Log files
+
 There are three types log files:
+
 * An error log file (`AutomaticMaintenance-Error.log`).
 * Debug log files: Invoke-ComputerMaintenance function will write all executed commands into separate log-files - one per host (`AutomaticMaintenance-<Host Name>-<Current Date>.log`).
-* Maintenance track log file. Its main purpose is to let you keep a track of when which host has been maintained (`AutomaticMaintenance-HostMaintenanceLog.log`).
+* Maintenance track log file. Its main purpose is to let you keep a track of when which host has been maintained (`AutomaticMaintenance-HostMaintenanceLog.log`). You can turn it off by setting the module configuration variable `$ModuleWideEnableMaintenanceLog` to `$false`.
 
 ## Dependencies
+
 The module depends on the following modules:
+
 * [PendingReboot](https://github.com/bcwilhite/PendingReboot) - To detect if a reboot is required after updates installation.
 * [ResourceLocker](https://github.com/FozzyHosting/ResourceLocker) - To let other automation know that the host is about to reboot. Also it is used to prevent reboots while the host is used by some other functions/scripts.
 * [SimpleTextLogger](https://github.com/FozzyHosting/SimpleTextLogger) - To log actions and errors.
 * [SplitOutput](https://github.com/exchange12rocks/SplitOutput) - To log debug output.
 
 ### HV-SCVMM
-For the `HV-SCVMM` type, the module uses [SCVMReliableMigration](https://github.com/FozzyHosting/SCVMReliableMigration) to migrate workload between hosts.
+
+For hosts of the `HV-SCVMM` type, the module uses [SCVMReliableMigration](https://github.com/FozzyHosting/SCVMReliableMigration) to migrate workload between them.
+
+### HV-Vanilla
+
+For hosts of the `HV-Vanilla` type, the module uses [HVVMReliableMigration](https://github.com/FozzyHosting/HVVMReliableMigration) to migrate workload.
 
 ## Module-wide variables
+
 There are several variables defined in the .psm1-file, which are used by the module's functions as default values for parameters:
 
 * `[string]$LogFileFolderPath` - Specifies the path to a folder where debug and error log files will be placed.
@@ -76,15 +97,16 @@ There are several variables defined in the .psm1-file, which are used by the mod
 
 * `[string]$ModuleWideComputerMaintenanceConfigurationFilePath` - Default value for **Get-ComputerMaintenanceConfiguration**'s `-FilePath` parameter.
 * `[string]$ModuleWideComputerMaintenanceConfigurationTemplatesFilePath` - A path to the templates file.
-* `[string]$ModuleWideScriptBlocksFolderPath` - A path to the folder where files for step commands are located.
+* `[string]$ModuleWideScriptBlocksFolderPath` - A path to the folder where plug-in files are located.
 
-* `[bool]$ModuleWideDebugLog` - Default value for **Invoke-InfrastructureMaintenance**'s `-DebugLog` parameter.
+* `[bool]$ModuleWideDebugLog` - Default value for **Invoke-InfrastructureMaintenance**'s `-DebugLog` parameter.  Disabled by default.
 * `[string]$ModuleWideTextLogMutexName` - Default value for **Invoke-InfrastructureMaintenance**'s `-LogMutexName` parameter.
 * `[string]$ModuleWideErrorLogMutexName` - The name of a mutex used to access an error log file object.
 * `[bool]$ModuleWideFailOnPreviousFailure` - Default value for **Invoke-InfrastructureMaintenance**'s `-FailOnPreviousFailure` parameter.
 * `[bool]$ModuleWideErrorXMLDump` - Enables an additional error dump in the XML format: the error object exports through the `Export-CliXml` cmdlet.
 * `[int]$ModuleWideErrorXMLDumpDepth` - When `$ModuleWideErrorXMLDump` is set to `$true`, use this variable to tune the object's depth.
 
+* `[string]$ModuleWideEnableMaintenanceLog` - Default value for **Invoke-ComputerMaintenance**'s `-EnableMaintenanceLog` parameter. Disabled by default.
 * `[string]$ModuleWideMaintenanceLogFilePath` - A path to the maintenance track log file.
 * `[string]$ModuleWideMaintenanceLogMutexName` - The name of a mutex used to access the maintenance track log file object.
 * `[string]$ModuleWideMaintenanceLogFileDelimiter` - A delimiter used to split columns in the maintenance track log file.
@@ -100,20 +122,31 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[string]$ModuleWideInstallUpdateTaskDescription` - The description of a Task Scheduler task which executes code to find and install updates.
 * `[string]$ModuleWideCheckUpdateDefaultFilterString` - A filter which is used to detect new updates. Used if an `UpdateCheckFilter` attribute is not defined in host's configuration.
 * `[string]$ModuleWideInstallUpdateDefaultFilterString` - A filter which is used during updates installation. Used if an `UpdateInstallFilter` attribute is not defined in host's configuration.
-* `[string]$ModuleWideUpdateSearchCriteria` - Criteria for the IUpdateSearcher::Search method (https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nf-wuapi-iupdatesearcher-search)
+* `[string]$ModuleWideUpdateSearchCriteria` - Criteria for the IUpdateSearcher::Search method (<https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nf-wuapi-iupdatesearcher-search>)
+
+* `[bool]$ModuleWideHVVanillaPutInASubfolder` - When set to `$true` (default), places vanilla Hyper-V virtual machines in subfolders, named as VMs themselves, therefore mimicking SCVMM behavior. Requires access to WinRM on the target computer and access to the Win32_Directory WMI class.
 
 ## Loading variables from an external source
+
 All module-wide variables can be redefined with a `Config.ps1` file, located in the module's root folder. Just put variable definitions in there as you would do with any other PowerShell script. You may find an example of a config file `Config-Example.ps1` in the module's root folder.
 
 ## Limitations
+
 * Currently, all hosts should be available by all of the following protocols: RPC, WinRM, SMB.
 * %SystemRoot%\system32\dllhost.exe should be able to accept network connections to RPC Dynamic ports not only as a service, but as an ordinary process as well.
+
+  * ```powershell
+    New-NetFirewallRule -DisplayName 'TEST' -Action Allow -Direction Inbound -Enabled True -LocalPort RPC -PolicyStore PersistentStore -Program '%SystemRoot%\system32\dllhost.exe' -Protocol TCP
+    ```
+
 * User, which runs Invoke-ComputerMaintenance or Invoke-InfrastructureMaintenance, should be a local administrator at the hosts.
 * The module has a tight dependency on the ResourceLocker module - currently it's improssible to use it w/o that module.
 * The module is single-treaded, no parallelization support yet.
 
 ## What's with all the Write-Debug calls?
-https://exchange12rocks.org/2018/11/20/how-do-you-debug-your-powershell-code/
+
+<https://exchange12rocks.org/2018/11/20/how-do-you-debug-your-powershell-code/>
 
 ## Related links
-https://github.com/Sorrowfulgod/UpdateService
+
+<https://github.com/Sorrowfulgod/UpdateService>

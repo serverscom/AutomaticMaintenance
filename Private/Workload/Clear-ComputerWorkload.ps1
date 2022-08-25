@@ -45,7 +45,69 @@ function Clear-ComputerWorkload {
                 }
             }
             'HV-Vanilla' {
-                # TODO
+                foreach ($WorkloadPair in $ComputerMaintenanceConfiguration.Workload) {
+                    Write-Debug -Message ('$WorkloadPair: ''{0}''' -f [string]$WorkloadPair)
+
+                    Write-Debug -Message ('$FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode ''{0}''' -f $_)
+                    $FilterData = Get-HVWorkloadFilter -WorkloadPair $WorkloadPair -Mode $_
+                    Write-Debug -Message ('$FilterData = ''{0}''' -f $FilterData)
+                    Write-Debug -Message '$SourceFilter = $FilterData.Source'
+                    $SourceFilter = $FilterData.Source
+                    Write-Debug -Message ('$SourceFilter = {{{0}}}' -f $SourceFilter)
+                    Write-Debug -Message '$DestinationFilter = $FilterData.Destination'
+                    $DestinationFilter = $FilterData.Destination
+                    Write-Debug -Message ('$DestinationFilter = {{{0}}}' -f $DestinationFilter)
+
+                    Write-Debug -Message '$ClearComputerWorkloadHVVanillaParameters = @{}'
+                    $ClearComputerWorkloadHVVanillaParameters = @{}
+                    Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters: ''{0}''' -f ($ClearComputerWorkloadHVVanillaParameters | Out-String))
+
+                    Write-Debug -Message 'if ($SourceFilter)'
+                    if ($SourceFilter) {
+                        Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters.Add(''SourceFilter'', {{{0}}})' -f $SourceFilter)
+                        $ClearComputerWorkloadHVVanillaParameters.Add('SourceFilter', $SourceFilter)
+                    }
+                    Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters: ''{0}''' -f ($ClearComputerWorkloadHVVanillaParameters | Out-String))
+
+                    Write-Debug -Message 'if ($DestinationFilter)'
+                    if ($DestinationFilter) {
+                        Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters.Add(''DestinationFilter'', {{{0}}})' -f $DestinationFilter)
+                        $ClearComputerWorkloadHVVanillaParameters.Add('DestinationFilter', $DestinationFilter)
+                    }
+                    Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters: ''{0}''' -f ($ClearComputerWorkloadHVVanillaParameters | Out-String))
+
+                    Write-Debug -Message ('$WorkloadPair.MaxParallelMigrations: ''{0}''' -f $WorkloadPair.MaxParallelMigrations)
+                    Write-Debug 'if ($WorkloadPair.MaxParallelMigrations)'
+                    if ($WorkloadPair.MaxParallelMigrations) {
+                        Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters.Add(''MaxParallelMigrations'', {0})' -f $WorkloadPair.MaxParallelMigrations)
+                        $ClearComputerWorkloadHVVanillaParameters.Add('MaxParallelMigrations', $WorkloadPair.MaxParallelMigrations)
+                    }
+
+                    Write-Debug -Message '$PutInASubfolderExists = Get-Member -InputObject $WorkloadPair -Name ''PutInASubfolder'''
+                    $PutInASubfolderAttribute = Get-Member -InputObject $WorkloadPair -Name 'PutInASubfolder'
+                    Write-Debug -Message ('$PutInASubfolderAttribute: ''{0}''' -f $PutInASubfolderAttribute)
+                    Write-Debug -Message 'if ($PutInASubfolderAttribute)'
+                    if ($PutInASubfolderAttribute) {
+                        Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters.Add(''PutInASubfolder'', ${0})' -f $WorkloadPair.PutInASubfolder)
+                        $ClearComputerWorkloadHVVanillaParameters.Add('PutInASubfolder', $WorkloadPair.PutInASubfolder)
+                    }
+                    else {
+                        Write-Debug -Message '$PutInASubfolderAttribute = Get-Member -InputObject $ComputerMaintenanceConfiguration -Name ''PutInASubfolder'''
+                        $PutInASubfolderAttribute = Get-Member -InputObject $ComputerMaintenanceConfiguration -Name 'PutInASubfolder'
+                        Write-Debug -Message ('$PutInASubfolderAttribute: ''{0}''' -f $PutInASubfolderAttribute)
+                        Write-Debug -Message 'if ($PutInASubfolderAttribute)'
+                        if ($PutInASubfolderAttribute) {
+                            Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters.Add(''PutInASubfolder'', ${0})' -f $ComputerMaintenanceConfiguration.PutInASubfolder)
+                            $ClearComputerWorkloadHVVanillaParameters.Add('PutInASubfolder', $ComputerMaintenanceConfiguration.PutInASubfolder)
+                        }
+                    }
+                    Write-Debug -Message ('$ClearComputerWorkloadHVVanillaParameters: ''{0}''' -f ($ClearComputerWorkloadHVVanillaParameters | Out-String))
+
+                    Write-Debug -Message ('$DestinationHostLock: ''{0}''' -f $DestinationHostLock)
+                    Write-Debug -Message ('$DestinationHostLock.Value: ''{0}''' -f $DestinationHostLock.Value)
+                    Write-Debug -Message ('Clear-ComputerWorkloadHVVanilla -ComputerName ''{0}'' -DestinationVMHostName ''{1}'' -DestinationVMHostPath ''{2}'' -DestinationVMHostLock $DestinationHostLock @ClearComputerWorkloadHVVanillaParameters' -f $ComputerName, $WorkloadPair.DestinationName, $WorkloadPair.DestinationPath)
+                    Clear-ComputerWorkloadHVVanilla -ComputerName $ComputerName -DestinationVMHostName $WorkloadPair.DestinationName -DestinationVMHostPath $WorkloadPair.DestinationPath -DestinationVMHostLock $DestinationHostLock @ClearComputerWorkloadHVVanillaParameters
+                }
             }
             'SCDPM' {
                 # TODO

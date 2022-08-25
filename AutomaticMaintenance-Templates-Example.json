@@ -12,7 +12,7 @@
         }
     },
     {
-        "Name": "Example-Template2",
+        "Name": "Example-SCVMM",
         "Include": [
             {
                 "Priority": 1,
@@ -36,6 +36,31 @@
                     "Filter": "$_.Name -notlike '*-DontMove'"
                 }
             ]
+        }
+    },
+    {
+        "Name": "Hosts-With-Silverlight",
+        "Properties": {
+            "UpdateInstallFilter": "$_.Title -notlike '*Preview*' -and $_.Title -notlike '*Security Only*'"
+        }
+    },
+    {
+        "Name": "Example-Hyper-V",
+        "Include": [
+            {
+                "Priority": 1,
+                "Name": "Example-Template"
+            },
+            {
+                "Priority": 2,
+                "Name": "Hosts-With-Silverlight"
+            }
+        ],
+        "Properties": {
+            "Type": "HV-Vanilla",
+            "PutInASubfolder": true,
+            "TestCommands": "Example-Test-HV.ps1",
+            "FinallyCommands": ""
         }
     }
 ]

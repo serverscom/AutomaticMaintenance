@@ -18,7 +18,7 @@ try {
     # Put here code which you want to execute at the Finally step.
 
     # In the example below, we check if monitoring enabled for the host and, if needed, we turn it back on.
-    # As with the PreRestore step, here we use the $HostDowntime variable to pass downtime objects between step scripts.
+    # As with the PreRestore step, here we use the $HostDowntime variable to pass downtime objects between plug-ins.
 
     $HostDowntime = ($Variables | Where-Object -FilterScript {$_.Name -eq 'HostDowntime'}).Value
     Write-Debug -Message ('$HostDowntime: {0}' -f $HostDowntime)

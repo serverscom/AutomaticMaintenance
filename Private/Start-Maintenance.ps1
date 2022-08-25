@@ -4,7 +4,8 @@ function Start-Maintenance {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory)]
-        [string]$ComputerName
+        [string]$ComputerName,
+        [switch]$EnableMaintenanceLog
     )
 
     $ErrorActionPreference = 'Stop'
@@ -15,6 +16,7 @@ function Start-Maintenance {
         Write-Debug -Message ('ENTER TRY {0}' -f $MyInvocation.MyCommand.Name)
 
         Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
+        Write-Debug -Message ('$EnableMaintenanceLog = ${0}' -f $EnableMaintenanceLog)
 
         Write-Debug -Message ('Invoke-WindowsUpdate -ComputerName ''{0}''' -f $ComputerName)
         Invoke-WindowsUpdate -ComputerName $ComputerName
@@ -29,6 +31,13 @@ function Start-Maintenance {
         if ($PendingReboot) {
             Write-Debug -Message ('Invoke-ComputerRestart -ComputerName {0}' -f $ComputerName)
             Invoke-ComputerRestart -ComputerName $ComputerName
+        }
+
+        Write-Debug -Message ('$EnableMaintenanceLog = ${0}' -f $EnableMaintenanceLog)
+        Write-Debug -Message 'if ($EnableMaintenanceLog)'
+        if ($EnableMaintenanceLog) {
+            Write-Debug -Message ('Set-MaintenanceState -ComputerName ''{0}''' -f $ComputerName)
+            Set-MaintenanceState -ComputerName $ComputerName
         }
 
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)

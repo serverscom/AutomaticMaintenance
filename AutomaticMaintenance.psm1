@@ -20,6 +20,7 @@ $ModuleName = ($MyInvocation.MyCommand.Name).Substring(0, ($MyInvocation.MyComma
 [bool]$ModuleWideErrorXMLDump = $true
 [int]$ModuleWideErrorXMLDumpDepth = 5
 
+[bool]$ModuleWideEnableMaintenanceLog = $false
 [string]$ModuleWideMaintenanceLogFilePath = Join-Path -Path $ModulePath -Childpath ('{0}-HostMaintenanceLog.log' -f $ModuleName)
 [string]$ModuleWideMaintenanceLogMutexName = '{0}MaintenanceLogMutex' -f $ModuleName
 [string]$ModuleWideMaintenanceLogFileDelimiter = ';'
@@ -33,9 +34,15 @@ $ModuleName = ($MyInvocation.MyCommand.Name).Substring(0, ($MyInvocation.MyComma
 [System.TimeSpan]$ModuleWideInstallUpdateThreshold = New-Object -TypeName 'System.TimeSpan' -ArgumentList @(1, 0, 0)
 [string]$ModuleWideInstallUpdateTaskName = 'AMWindowsUpdate'
 [string]$ModuleWideInstallUpdateTaskDescription = 'Automatic Maintenance Windows Update Installer Task'
-[string]$ModuleWideCheckUpdateDefaultFilterString = '$_.Title -notlike ''Definition Update for Windows Defender Antivirus *''' # Defender updates are released constantly and do not require reboot. If we would not exclude them, there would be constant useless workload movement.
+[string]$ModuleWideCheckUpdateDefaultFilterString = '$_.Title -notlike ''* Defender Antivirus *'' -and $_.Title -notlike ''*Malicious Software Removal Tool*''' # Defender updates are released constantly and do not require reboot. If we would not exclude them, there would be constant useless workload movement. Malicious Software Removal Tool also does not require a reboot - install it along other updates.
+# Other good exclusions are:
+# -and $_.Title -notlike ''*Preview*''
+# -and $_.Title -notlike ''*Silverlight*''
+# -and $_.Title -notlike ''* Security Only *''
 [string]$ModuleWideInstallUpdateDefaultFilterString = '$_ -like ''*'''
 [string]$ModuleWideUpdateSearchCriteria = 'IsInstalled=0 and IsHidden=0'
+
+[bool]$ModuleWideHVVanillaPutInASubfolder = $true
 
 foreach ($FunctionType in @('Private', 'Public')) {
     $Path = Join-Path -Path $ModulePath -ChildPath ('{0}\*.ps1' -f $FunctionType)
