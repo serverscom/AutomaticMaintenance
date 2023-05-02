@@ -8,7 +8,8 @@ function Initialize-ComputerMaintenance {
         [Parameter(Mandatory)]
         [ref]$DestinationHostLock,
         [switch]$SkipNotLockable,
-        [switch]$SkipPreventivelyLocked
+        [switch]$SkipPreventivelyLocked,
+        [string]$SkipPreventivelyLockedFullyQualifiedErrorId
     )
 
     $ErrorActionPreference = 'Stop'
@@ -75,8 +76,8 @@ function Initialize-ComputerMaintenance {
                         Write-Debug -Message ('$SkipPreventivelyLocked: ''{0}''' -f $SkipPreventivelyLocked)
                         Write-Debug -Message 'if ($SkipPreventivelyLocked)'
                         if ($SkipPreventivelyLocked) {
-                            Write-Debug -Message 'return'
-                            return
+                            $Message = ('Skipping the computer {0} because it is locked by other sources for more than {1} already and $SkipPreventivelyLocked is {2}.' -f $ComputerName, [string]$PreventiveLockThreshold, [string]$SkipPreventivelyLocked)
+                            $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.OperationCanceledException' -ArgumentList $Message), $SkipPreventivelyLockedFullyQualifiedErrorId, [System.Management.Automation.ErrorCategory]::OperationStopped, $null)))
                         }
                         else {
                             $Message = ('Computer {0} is locked by other sources for more than {1} already' -f $ComputerName, [string]$PreventiveLockThreshold)
