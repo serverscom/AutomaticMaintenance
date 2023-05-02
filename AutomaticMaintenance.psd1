@@ -1,6 +1,6 @@
 @{
     RootModule        = 'AutomaticMaintenance.psm1'
-    ModuleVersion     = '2.9'
+    ModuleVersion     = '2.9.1'
     GUID              = '8e34abf8-40ba-4c68-8bf8-f235cd001d82'
     Author            = 'Kirill Nikolaev'
     CompanyName       = 'Fozzy Inc.'
@@ -26,6 +26,6 @@
             LicenseUri   = 'https://github.com/FozzyHosting/AutomaticMaintenance/blob/master/LICENSE'
             ProjectUri   = 'https://github.com/FozzyHosting/AutomaticMaintenance/'
             ReleaseNotes = ''
-        }  
+        }
     }
 }
