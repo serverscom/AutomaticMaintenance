@@ -15,6 +15,7 @@ function Clear-ComputerWorkloadHVVanilla {
         [scriptblock]$DestinationFilter,
         [int]$MaxParallelMigrations,
         [switch]$PutInASubfolder = $ModuleWideHVVanillaPutInASubfolder,
+        [switch]$PreserveSourceVhdPathDriveLetter = $ModuleWideHVVanillaPreserveSourceVhdPathDriveLetter,
         [ref]$DestinationVMHostLock
     )
 
@@ -32,6 +33,7 @@ function Clear-ComputerWorkloadHVVanilla {
         Write-Debug -Message ('$DestinationFilter = {{{0}}}' -f $DestinationFilter)
         Write-Debug -Message ('$MaxParallelMigrations = {0}' -f $MaxParallelMigrations)
         Write-Debug -Message ('$PutInASubfolder = ${0}' -f $PutInASubfolder)
+        Write-Debug -Message ('$PreserveSourceVhdPathDriveLetter = ${0}' -f $PreserveSourceVhdPathDriveLetter)
         Write-Debug -Message ('$DestinationVMHostLock: ''{0}''' -f $DestinationVMHostLock)
         Write-Debug -Message ('$DestinationVMHostLock.Value: ''{0}''' -f $DestinationVMHostLock.Value)
 
@@ -91,8 +93,8 @@ function Clear-ComputerWorkloadHVVanilla {
             Write-Debug -Message ('$DestinationVMHost = Get-VMHost -ComputerName ''{0}''' -f $DestinationVMHostName)
             $DestinationVMHost = Get-VMHost -ComputerName $DestinationVMHostName
             Write-Debug -Message ('$DestinationVMHost: ''{0}''' -f $DestinationVMHost)
-            Write-Debug -Message ('$UnmigratableVMs = Move-VMReliably -DestinationVMHost $DestinationVMHost -Path ''{0}'' -VM $SourceVMs -MaxParallelMigrations {1} -PutInASubfolder:${2}' -f $DestinationVMHostPath, $MaxParallelMigrations, $PutInASubfolder)
-            $UnmigratableVMs = Move-VMReliably -DestinationVMHost $DestinationVMHost -Path $DestinationVMHostPath -VM $SourceVMs -MaxParallelMigrations $MaxParallelMigrations -PutInASubfolder:$PutInASubfolder
+            Write-Debug -Message ('$UnmigratableVMs = Move-VMReliably -DestinationVMHost $DestinationVMHost -Path ''{0}'' -VM $SourceVMs -MaxParallelMigrations {1} -PutInASubfolder:${2} -PreserveSourceVhdPathDriveLetter:${3}' -f $DestinationVMHostPath, $MaxParallelMigrations, $PutInASubfolder, $PreserveSourceVhdPathDriveLetter)
+            $UnmigratableVMs = Move-VMReliably -DestinationVMHost $DestinationVMHost -Path $DestinationVMHostPath -VM $SourceVMs -MaxParallelMigrations $MaxParallelMigrations -PutInASubfolder:$PutInASubfolder -PreserveSourceVhdPathDriveLetter:$PreserveSourceVhdPathDriveLetter
             Write-Debug -Message ('$UnmigratableVMs: ''{0}''' -f [string]$UnmigratableVMs.Name)
             Write-Debug -Message 'if ($UnmigratableVMs)'
             if ($UnmigratableVMs) {
