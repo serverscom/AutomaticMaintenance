@@ -125,6 +125,7 @@ There are several variables defined in the .psm1-file, which are used by the mod
 * `[string]$ModuleWideUpdateSearchCriteria` - Criteria for the IUpdateSearcher::Search method (<https://docs.microsoft.com/en-us/windows/desktop/api/wuapi/nf-wuapi-iupdatesearcher-search>)
 
 * `[bool]$ModuleWideHVVanillaPutInASubfolder` - When set to `$true` (default), places vanilla Hyper-V virtual machines in subfolders, named as VMs themselves, therefore mimicking SCVMM behavior. Requires access to WinRM on the target computer and access to the Win32_Directory WMI class.
+* `[bool]$ModuleWideHVVanillaPreserveSourceVhdPathDriveLetter` - When set to `$false` (default), VHDs attached to virtual machines will be placed to the destination directory defined in the "workload" configuration block. When set to `$true`, virtual hard disks of the migrated virtual machines will be placed to the partitions with the same drive letters as on the source host, if such partitions exist.
 
 ## Loading variables from an external source
 
