@@ -6,7 +6,8 @@ function Get-HVFilterString {
         [string]$Path,
         [string]$Filter,
         [ValidateSet('HV-SCVMM', 'HV-Vanilla')]
-        [string]$Mode = 'HV-SCVMM'
+        [string]$Mode = 'HV-SCVMM',
+        [switch]$ExcludePathFromFilter
     )
 
     $ErrorActionPreference = 'Stop'
@@ -19,25 +20,27 @@ function Get-HVFilterString {
         Write-Debug -Message ('$Path = ''{0}''' -f $Path)
         Write-Debug -Message ('$Filter = ''{0}''' -f $Filter)
         Write-Debug -Message ('$Mode = ''{0}''' -f $Mode)
+        Write-Debug -Message ('$ExcludePathFromFilter = ${0}' -f $ExcludePathFromFilter)
 
-        Write-Debug -Message '$VMLocationPropertyName = switch ($Mode)'
-        $VMLocationPropertyName = switch ($Mode) {
-            'HV-SCVMM' {
-                Write-Debug -Message 'Location'
-                'Location'
+        Write-Debug -Message 'if ($Path -and -not $ExcludePathFromFilter)'
+        if ($Path -and -not $ExcludePathFromFilter) {
+            Write-Debug -Message '$VMLocationPropertyName = switch ($Mode)'
+            $VMLocationPropertyName = switch ($Mode) {
+                'HV-SCVMM' {
+                    Write-Debug -Message 'Location'
+                    'Location'
+                }
+                'HV-Vanilla' {
+                    Write-Debug -Message 'Path'
+                    'Path'
+                }
+                Default {
+                    Write-Debug -Message 'Location'
+                    'Location'
+                }
             }
-            'HV-Vanilla' {
-                Write-Debug -Message 'Path'
-                'Path'
-            }
-            Default {
-                Write-Debug -Message 'Location'
-                'Location'
-            }
-        }
-        Write-Debug -Message ('$VMLocationPropertyName = ''{0}''' -f $VMLocationPropertyName)
+            Write-Debug -Message ('$VMLocationPropertyName = ''{0}''' -f $VMLocationPropertyName)
 
-        if ($Path) {
             Write-Debug -Message ('$FilterPath = [System.IO.Path]::Combine(''{0}'', ''*'')' -f $Path)
             $FilterPath = [System.IO.Path]::Combine($Path, '*') # Join-Path cannot combine paths on a drive which does not exist on the machine
             Write-Debug -Message ('$FilterPath = ''{0}''' -f $FilterPath)
@@ -57,8 +60,15 @@ function Get-HVFilterString {
         }
         Write-Debug -Message ('$FilterString = ''{0}''' -f $FilterString)
 
-        Write-Debug -Message ('[scriptblock]::Create(''{0}'')' -f $FilterString)
-        [scriptblock]::Create($FilterString)
+        Write-Debug -Message 'if ($FilterString)'
+        if ($FilterString) {
+            Write-Debug -Message ('[scriptblock]::Create(''{0}'')' -f $FilterString)
+            [scriptblock]::Create($FilterString)
+        }
+        else {
+            Write-Debug -Message '$null'
+            $null
+        }
 
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
     }
