@@ -9,7 +9,7 @@ function Initialize-ComputerMaintenance {
         [ref]$DestinationHostLock,
         [switch]$SkipNotLockable,
         [switch]$SkipPreventivelyLocked,
-        [string]$SkipPreventivelyLockedFullyQualifiedErrorId
+        [string]$SkipPreventivelyLockedExceptionTarget
     )
 
     $ErrorActionPreference = 'Stop'
@@ -26,6 +26,7 @@ function Initialize-ComputerMaintenance {
         Write-Debug -Message ('$DestinationHostLock.Value: ''{0}''' -f $DestinationHostLock.Value)
         Write-Debug -Message ('$SkipNotLockable = ${0}' -f $SkipNotLockable)
         Write-Debug -Message ('$SkipPreventivelyLocked = ${0}' -f $SkipPreventivelyLocked)
+        Write-Debug -Message ('SkipPreventivelyLockedExceptionTarget = ''{0}''' -f $SkipPreventivelyLockedExceptionTarget)
 
         Write-Debug -Message '$CallerName = Get-LockCallerName'
         $CallerName = Get-LockCallerName
@@ -77,7 +78,7 @@ function Initialize-ComputerMaintenance {
                         Write-Debug -Message 'if ($SkipPreventivelyLocked)'
                         if ($SkipPreventivelyLocked) {
                             $Message = ('Skipping the computer {0} because it is locked by other sources for more than {1} already and $SkipPreventivelyLocked is {2}.' -f $ComputerName, [string]$PreventiveLockThreshold, [string]$SkipPreventivelyLocked)
-                            $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.OperationCanceledException' -ArgumentList $Message), $SkipPreventivelyLockedFullyQualifiedErrorId, [System.Management.Automation.ErrorCategory]::OperationStopped, $null)))
+                            $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.OperationCanceledException' -ArgumentList $Message), 'OperationStopped', [System.Management.Automation.ErrorCategory]::OperationStopped, $SkipPreventivelyLockedExceptionTarget)))
                         }
                         else {
                             $Message = ('Computer {0} is locked by other sources for more than {1} already' -f $ComputerName, [string]$PreventiveLockThreshold)

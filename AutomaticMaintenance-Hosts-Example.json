@@ -20,9 +20,10 @@
         "Workload": [
             {
                 "Path": "D:\\VMs",
+                "SourcePathFilterDisabled": true,
                 "DestinationName": "SRV05",
                 "DestinationPath": "E:\\VMs",
-                "Filter": "$_.Name -notlike '*-DontMove'"
+                "Filter": "$_.Name -notin @('StaticVM1', 'StaticVM2') -and $_.Location -notlike 'F:\\StaticVMs*'"
             }
         ]
     },

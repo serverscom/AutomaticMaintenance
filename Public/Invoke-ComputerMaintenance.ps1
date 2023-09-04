@@ -6,7 +6,7 @@ function Invoke-ComputerMaintenance {
         [string]$ComputerName,
         [int]$PreventiveLockTimeout = $ModuleWidePreventiveLockTimeout,
         [System.TimeSpan]$PreventiveLockThreshold = $ModuleWidePreventiveLockThreshold,
-        [string]$SkipPreventivelyLockedFullyQualifiedErrorId = $ModuleWideSkipPreventivelyLockedFullyQualifiedErrorId,
+        [string]$SkipPreventivelyLockedExceptionTarget = $ModuleWideSkipPreventivelyLockedExceptionTarget,
         [switch]$SkipNotLockable = $ModuleWideSkipNotLockable,
         [switch]$SkipPreventivelyLocked = $ModuleWideSkipPreventivelyLocked,
         [switch]$EnableMaintenanceLog = $ModuleWideEnableMaintenanceLog
@@ -22,6 +22,7 @@ function Invoke-ComputerMaintenance {
         Write-Debug -Message ('$ComputerName = ''{0}''' -f $ComputerName)
         Write-Debug -Message ('$PreventiveLockTimeout = {0}' -f $PreventiveLockTimeout)
         Write-Debug -Message ('$PreventiveLockThreshold: ''{0}''' -f [string]$PreventiveLockThreshold)
+        Write-Debug -Message ('SkipPreventivelyLockedExceptionTarget = ''{0}''' -f $SkipPreventivelyLockedExceptionTarget)
         Write-Debug -Message ('$SkipNotLockable = ${0}' -f $SkipNotLockable)
         Write-Debug -Message ('$SkipPreventivelyLocked = ${0}' -f $SkipPreventivelyLocked)
         Write-Debug -Message ('$EnableMaintenanceLog = ${0}' -f $EnableMaintenanceLog)
@@ -45,8 +46,8 @@ function Invoke-ComputerMaintenance {
             Write-Debug -Message 'if ($PendingReboot.ComponentBasedServicing)'
             if ($PendingReboot.ComponentBasedServicing) {
                 # Sometimes, when CBS requires reboot, search for updates hangs up. Therefore, we need to reboot the machine first.
-                Write-Debug -Message ('$ComputerWorkload = Initialize-ComputerMaintenance -ComputerName ''{0}'' -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:${1} -SkipPreventivelyLocked:${2} -SkipPreventivelyLockedFullyQualifiedErrorId ''{3}''' -f $ComputerName, $SkipNotLockable, $SkipPreventivelyLocked, $SkipPreventivelyLockedFullyQualifiedErrorId)
-                $ComputerWorkload = Initialize-ComputerMaintenance -ComputerName $ComputerName -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:$SkipNotLockable -SkipPreventivelyLocked:$SkipPreventivelyLocked -SkipPreventivelyLockedFullyQualifiedErrorId $SkipPreventivelyLockedFullyQualifiedErrorId
+                Write-Debug -Message ('$ComputerWorkload = Initialize-ComputerMaintenance -ComputerName ''{0}'' -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:${1} -SkipPreventivelyLocked:${2} -SkipPreventivelyLockedExceptionTarget ''{3}''' -f $ComputerName, $SkipNotLockable, $SkipPreventivelyLocked, $SkipPreventivelyLockedExceptionTarget)
+                $ComputerWorkload = Initialize-ComputerMaintenance -ComputerName $ComputerName -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:$SkipNotLockable -SkipPreventivelyLocked:$SkipPreventivelyLocked -SkipPreventivelyLockedExceptionTarget $SkipPreventivelyLockedExceptionTarget
                 Write-Debug -Message ('$ComputerWorkload: ''{0}''' -f [string]$ComputerWorkload)
 
                 Write-Debug -Message ('$HostLock: ''{0}''' -f $HostLock)
@@ -73,8 +74,8 @@ function Invoke-ComputerMaintenance {
                 $IsMaintenanceNeeded = Test-MaintenanceNeeded -ComputerName $ComputerName
                 Write-Debug -Message ('$IsMaintenanceNeeded = ${0}' -f $IsMaintenanceNeeded)
                 if ($IsMaintenanceNeeded) {
-                    Write-Debug -Message ('$ComputerWorkload = Initialize-ComputerMaintenance -ComputerName ''{0}'' -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:${1} -SkipPreventivelyLocked:${2} -SkipPreventivelyLockedFullyQualifiedErrorId ''{3}''' -f $ComputerName, $SkipNotLockable, $SkipPreventivelyLocked, $SkipPreventivelyLockedFullyQualifiedErrorId)
-                    $ComputerWorkload = Initialize-ComputerMaintenance -ComputerName $ComputerName -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:$SkipNotLockable -SkipPreventivelyLocked:$SkipPreventivelyLocked -SkipPreventivelyLockedFullyQualifiedErrorId $SkipPreventivelyLockedFullyQualifiedErrorId
+                    Write-Debug -Message ('$ComputerWorkload = Initialize-ComputerMaintenance -ComputerName ''{0}'' -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:${1} -SkipPreventivelyLocked:${2} -SkipPreventivelyLockedExceptionTarget ''{3}''' -f $ComputerName, $SkipNotLockable, $SkipPreventivelyLocked, $SkipPreventivelyLockedExceptionTarget)
+                    $ComputerWorkload = Initialize-ComputerMaintenance -ComputerName $ComputerName -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:$SkipNotLockable -SkipPreventivelyLocked:$SkipPreventivelyLocked -SkipPreventivelyLockedExceptionTarget $SkipPreventivelyLockedExceptionTarget
                     Write-Debug -Message ('$ComputerWorkload: ''{0}''' -f [string]$ComputerWorkload)
                     Write-Debug -Message ('$HostLock: ''{0}''' -f $HostLock)
                     Write-Debug -Message 'if ($HostLock)'
@@ -91,8 +92,8 @@ function Invoke-ComputerMaintenance {
                     # If the machine does not need any updates, but just a reboot, let's reboot it.
                     Write-Debug -Message ('$PendingReboot.IsRebootPending: ''{0}''' -f $PendingReboot.IsRebootPending)
                     if ($PendingReboot.IsRebootPending) {
-                        Write-Debug -Message ('$ComputerWorkload = Initialize-ComputerMaintenance -ComputerName ''{0}'' -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:${1} -SkipPreventivelyLocked:${2} -SkipPreventivelyLockedFullyQualifiedErrorId ''{3}''' -f $ComputerName, $SkipNotLockable, $SkipPreventivelyLocked, $SkipPreventivelyLockedFullyQualifiedErrorId)
-                        $ComputerWorkload = Initialize-ComputerMaintenance -ComputerName $ComputerName -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:$SkipNotLockable -SkipPreventivelyLocked:$SkipPreventivelyLocked -SkipPreventivelyLockedFullyQualifiedErrorId $SkipPreventivelyLockedFullyQualifiedErrorId
+                        Write-Debug -Message ('$ComputerWorkload = Initialize-ComputerMaintenance -ComputerName ''{0}'' -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:${1} -SkipPreventivelyLocked:${2} -SkipPreventivelyLockedExceptionTarget ''{3}''' -f $ComputerName, $SkipNotLockable, $SkipPreventivelyLocked, $SkipPreventivelyLockedExceptionTarget)
+                        $ComputerWorkload = Initialize-ComputerMaintenance -ComputerName $ComputerName -HostLock ([ref]$HostLock) -DestinationHostLock ([ref]$DestinationHostLock) -SkipNotLockable:$SkipNotLockable -SkipPreventivelyLocked:$SkipPreventivelyLocked -SkipPreventivelyLockedExceptionTarget $SkipPreventivelyLockedExceptionTarget
                         Write-Debug -Message ('$ComputerWorkload: ''{0}''' -f [string]$ComputerWorkload)
                         Write-Debug -Message ('$HostLock: ''{0}''' -f $HostLock)
                         Write-Debug -Message 'if ($HostLock)'
@@ -114,9 +115,9 @@ function Invoke-ComputerMaintenance {
     catch {
         Write-Debug -Message ('ENTER CATCH {0}' -f $MyInvocation.MyCommand.Name)
 
-        Write-Debug -Message ('$_.FullyQualifiedErrorId: ''{0}''' -f $_.FullyQualifiedErrorId)
-        Write-Debug -Message ('if ($_.FullyQualifiedErrorId -ne ''{0}'')' -f $SkipPreventivelyLockedFullyQualifiedErrorId)
-        if ($_.FullyQualifiedErrorId -ne $SkipPreventivelyLockedFullyQualifiedErrorId) {
+        Write-Debug -Message ('$_.TargetObject: ''{0}''' -f $_.TargetObject)
+        Write-Debug -Message ('if ($_.TargetObject -ne ''{0}'')' -f $SkipPreventivelyLockedExceptionTarget)
+        if ($_.TargetObject -ne $SkipPreventivelyLockedExceptionTarget) {
 
             Write-Debug -Message ('{0}: $PSCmdlet.ThrowTerminatingError($_)' -f $MyInvocation.MyCommand.Name)
             $PSCmdlet.ThrowTerminatingError($_)
