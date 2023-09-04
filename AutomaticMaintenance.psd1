@@ -1,6 +1,6 @@
 @{
     RootModule        = 'AutomaticMaintenance.psm1'
-    ModuleVersion     = '2.10.0'
+    ModuleVersion     = '2.11.0'
     GUID              = '8e34abf8-40ba-4c68-8bf8-f235cd001d82'
     Author            = 'Kirill Nikolaev'
     CompanyName       = 'Fozzy Inc.'
