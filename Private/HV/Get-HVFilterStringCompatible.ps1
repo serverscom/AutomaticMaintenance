@@ -41,8 +41,8 @@ function Get-HVFilterStringCompatible {
         }
         Write-Debug -Message ('$Filter = ''{0}''' -f $Filter)
 
-        Write-Debug -Message ('Get-HVFilterString -Path ''{0}'' -Filter ''{1}'' -Mode ''{2}''' -f $Path, $Filter, $Mode)
-        Get-HVFilterString -Path $Path -Filter $Filter -Mode $Mode
+        Write-Debug -Message ('Get-HVFilterString -Path ''{0}'' -Filter ''{1}'' -Mode ''{2}'' -ExcludePathFromFilter:${3}' -f $Path, $Filter, $Mode, [bool]$WorkloadPair.SourcePathFilterDisabled)
+        Get-HVFilterString -Path $Path -Filter $Filter -Mode $Mode -ExcludePathFromFilter:$WorkloadPair.SourcePathFilterDisabled
 
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
     }

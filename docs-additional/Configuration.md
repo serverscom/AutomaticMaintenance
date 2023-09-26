@@ -55,10 +55,13 @@ Each attribute is usually a name of a PowerShell script, located in the `$Module
 
 Workload objects have the following attributes:
 
-* Path - Path where VM's configuration is located.
+* Path - Path where VM's configuration is located and where VM's configuration will be stored after maintenance.
 * DestinationName - Destination host's name where to move virtual machines.
 * DestinationPath - Local path on the destination host.
 * Filter - Defines a filter which will be used to pick VMs from the source host. For example, if you wish for some VMs not to mirate, but stay at the source host during maintenance, you can filter them out here.
+* DestinationFilter - This setting specifies the filter that will be applied to VMs on the migration hypervisor before the migration starts and allows to ignore a workload that is already on the hypervisor. Otherwise, the module's default behavior will stop processing, assuming that the migration hypervisor is already busy. It could be useful when the "Workload" block contains several sets of settings, or the migration hypervisor already has the virtual machines that are not related to ongoing maintenance.
+* SourcePathFilterDisabled - When set to `false` or not specified, the module applies the `Filter` option to the VMs located in the `Path` folder, therefore the module migrates filtered VMs from the `Path` folder only.  When set to `true`, the module applies the `Filter` option to all VMs on the source host and migrates all filtered VMs. If both `SourcePathFilterDisabled` is `true` and `Filter` is not specified, all VMs will be considered as a workload to be migrated.
+
 
 #### HV-Vanilla
 

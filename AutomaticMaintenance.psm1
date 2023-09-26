@@ -29,7 +29,7 @@ $ModuleName = ($MyInvocation.MyCommand.Name).Substring(0, ($MyInvocation.MyComma
 [System.TimeSpan]$ModuleWidePreventiveLockThreshold = New-Object -TypeName 'System.TimeSpan' -ArgumentList @(1, 0, 0)
 [bool]$ModuleWideSkipPreventivelyLocked = $true
 [bool]$ModuleWideSkipNotLockable = $true
-[string]$ModuleWideSkipPreventivelyLockedFullyQualifiedErrorId = 'SkipPreventivelyLockedHost'
+[string]$ModuleWideSkipPreventivelyLockedExceptionTarget = 'SkipPreventivelyLockedHost'
 
 [int]$ModuleWideInstallUpdateTimeout = 60
 [System.TimeSpan]$ModuleWideInstallUpdateThreshold = New-Object -TypeName 'System.TimeSpan' -ArgumentList @(1, 0, 0)
