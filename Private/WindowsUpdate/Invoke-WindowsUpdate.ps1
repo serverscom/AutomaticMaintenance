@@ -30,6 +30,10 @@ function Invoke-WindowsUpdate {
         Write-Debug -Message ('$DefaultFilterString = ''{0}''' -f $DefaultFilterString)
         Write-Debug -Message ('$Criteria = ''{0}''' -f $Criteria)
 
+        Write-Debug -Message ('$RemoteCimSession = New-CimSession -ComputerName ''{0}''' -f $ComputerName)
+        $RemoteCimSession = New-CimSession -ComputerName $ComputerName
+        Write-Debug -Message ('$RemoteCimSession: ''{0}''' -f (Out-String -InputObject $RemoteCimSession))
+
         if (-not $Filter) {
             Write-Debug -Message ('$ComputerMaintenanceConfiguration = Get-ComputerMaintenanceConfiguration -ComputerName {0}' -f $ComputerName)
             $ComputerMaintenanceConfiguration = Get-ComputerMaintenanceConfiguration -ComputerName $ComputerName
@@ -98,69 +102,109 @@ function Invoke-WindowsUpdate {
         $ConvertedScriptBlock = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($JoinedScriptBlockString))
         Write-Debug -Message ('$ConvertedScriptBlock: ''{0}''' -f $ConvertedScriptBlock)
 
-        Write-Debug -Message '$Scheduler = New-Object -ComObject ''Schedule.Service'''
-        $Scheduler = New-Object -ComObject 'Schedule.Service'
-        Write-Debug -Message '$Task = $Scheduler.NewTask(0)'
-        $Task = $Scheduler.NewTask(0)
+        Write-Debug -Message '$ExistingSheduledTasks = Get-ScheduledTask -CimSession $RemoteCimSession'
+        $ExistingSheduledTasks = Get-ScheduledTask -CimSession $RemoteCimSession
+        Write-Debug -Message ('$ExistingSheduledTasks: ''{0}''' -f ($ExistingSheduledTasks.TaskName -join ', '))
 
-        Write-Debug -Message '$RegistrationInfo = $Task.RegistrationInfo'
-        $RegistrationInfo = $Task.RegistrationInfo
-        Write-Debug -Message ('$RegistrationInfo.Description = ''{0}''' -f $TaskDescription)
-        $RegistrationInfo.Description = $TaskDescription
-        Write-Debug -Message '$RegistrationInfo.Author = ''SYSTEM'''
-        $RegistrationInfo.Author = 'SYSTEM'
+        Write-Debug -Message '$ScheduledTaskStateRunning = ''Running'''
+        $ScheduledTaskStateRunning = 'Running'
 
-        Write-Debug -Message '$Settings = $Task.Settings'
-        $Settings = $Task.Settings
-        Write-Debug -Message '$Settings.Enabled = $true'
-        $Settings.Enabled = $true
-        Write-Debug -Message '$Settings.StartWhenAvailable = $true'
-        $Settings.StartWhenAvailable = $true
-        Write-Debug -Message '$Settings.Hidden = $false'
-        $Settings.Hidden = $false
-
-        Write-Debug -Message '$Action = $Task.Actions.Create(0)'
-        $Action = $Task.Actions.Create(0)
-        Write-Debug -Message '$Action.Path = ''powershell'''
-        $Action.Path = 'powershell'
-        Write-Debug -Message ('$Action.Arguments = ''-NoLogo -NoProfile -NonInteractive -EncodedCommand {{0}}'' -f ''{0}''' -f $ConvertedScriptBlock)
-        $Action.Arguments = '-NoLogo -NoProfile -NonInteractive -EncodedCommand {0}' -f $ConvertedScriptBlock
-
-        Write-Debug -Message '$Task.Principal.RunLevel = 1'
-        $Task.Principal.RunLevel = 1
-
-        Write-Debug -Message ('$Task.XmlText: {0}' -f [string]$Task.XmlText)
-
-        Write-Debug -Message ('$Scheduler.Connect(''{0}'')' -f $ComputerName)
-        $Scheduler.Connect($ComputerName)
-        Write-Debug -Message '$RootFolder = $Scheduler.GetFolder(''\'')'
-        $RootFolder = $Scheduler.GetFolder('\')
-        Write-Debug -Message ('$RootFolder: ''{0}''' -f $RootFolder | Out-String)
-
-        Write-Debug -Message ('$RunningTask = $Scheduler.GetRunningTasks(0) | Where-Object {{$_.Name -eq ''{0}''}}' -f $TaskName)
-        $RunningTask = $Scheduler.GetRunningTasks(0) | Where-Object {$_.Name -eq $TaskName}
-        Write-Debug -Message ('$RunningTask: {0}' -f [string]$RunningTask.Name)
-        Write-Debug -Message 'if ($RunningTask)'
-        if ($RunningTask) {
-            $Message = 'Task {0} is already running (PID: {1}) @ host {2}' -f $TaskName, $RunningTask.EnginePID, $ComputerName
-            $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.InvalidOperationException' -ArgumentList $Message), 'InvalidOperationException', [System.Management.Automation.ErrorCategory]::ResourceExists, $null)))
+        Write-Debug -Message 'foreach ($ExistingSheduledTask in $ExistingSheduledTasks)'
+        foreach ($ExistingSheduledTask in $ExistingSheduledTasks) {
+            Write-Debug -Message ('$ExistingSheduledTask: ''{0}''' -f (Out-String -InputObject $ExistingSheduledTask))
+            Write-Debug -Message ('if ($ExistingSheduledTask.TaskName -eq ''{0}'')' -f $TaskName)
+            if ($ExistingSheduledTask.TaskName -eq $TaskName) {
+                Write-Debug -Message '$ScheduledTaskState = $ExistingSheduledTask.State.ToString()'
+                $ScheduledTaskState = $ExistingSheduledTask.State.ToString()
+                Write-Debug -Message ('$ScheduledTaskState = ''{0}''' -f $ScheduledTaskState)
+                Write-Debug -Message 'if ($ScheduledTaskState -eq $ScheduledTaskStateRunning)'
+                if ($ScheduledTaskState -eq $ScheduledTaskStateRunning) {
+                    $Message = 'Task ''{0}'' is already running on host ''{1}'', task path: ''{2}''' -f $TaskName, $ComputerName, $ExistingSheduledTask.TaskPath
+                    $PSCmdlet.ThrowTerminatingError((New-Object -TypeName 'System.Management.Automation.ErrorRecord' -ArgumentList ((New-Object -TypeName 'System.InvalidOperationException' -ArgumentList $Message), 'InvalidOperationException', [System.Management.Automation.ErrorCategory]::ResourceExists, $null)))
+                }
+                else {
+                    Write-Debug -Message 'Unregister-ScheduledTask -InputObject $ExistingSheduledTask -Confirm:$false'
+                    Unregister-ScheduledTask -InputObject $ExistingSheduledTask -Confirm:$false
+                }
+            }
         }
 
-        Write-Debug -Message ('$null = $RootFolder.RegisterTaskDefinition(''{0}'', $Task, 6, ''SYSTEM'', $null, 1)' -f $TaskName)
-        $null = $RootFolder.RegisterTaskDefinition($TaskName, $Task, 6, 'SYSTEM', $null, 1)
-        Write-Debug -Message ('$null = $RootFolder.GetTask(''{0}'').Run(0)' -f $TaskName)
-        $null = $RootFolder.GetTask($TaskName).Run(0)
+        Write-Debug -Message ('$ScheduledTaskActionArgument = ''-NoLogo -NoProfile -NonInteractive -EncodedCommand {{0}}'' -f {0}' -f $ConvertedScriptBlock)
+        $ScheduledTaskActionArgument = '-NoLogo -NoProfile -NonInteractive -EncodedCommand {0}' -f $ConvertedScriptBlock
+        Write-Debug -Message ('$ScheduledTaskActionArgument = ''{0}''' -f $ScheduledTaskActionArgument)
+        Write-Debug -Message '$RemoteCimsessionParams = @{ CimSession = $RemoteCimSession }'
+
+        $RemoteCimsessionParams = @{
+            CimSession = $RemoteCimSession
+        }
+
+        Write-Debug -Message ('$RemoteCimsessionParams: ''{0}''' -f (Out-String -InputObject $RemoteCimsessionParams))
+        Write-Debug -Message ('$NewTaskActionParams = @{{ Execute = ''powershell''; Argument = ''{0}'' }}' -f $ScheduledTaskActionArgument)
+
+        $NewTaskActionParams = @{
+            Execute  = 'powershell'
+            Argument = $ScheduledTaskActionArgument
+        }
+
+        Write-Debug -Message ('$NewTaskActionParams: ''{0}''' -f (Out-String -InputObject $NewTaskActionParams))
+        Write-Debug -Message '$NewTaskPrincipalParams = @{ UserId = ''NT AUTHORITY\SYSTEM''; RunLevel = ''Highest''; Id = ''Author''; LogonType = ''ServiceAccount'' }'
+
+        $NewTaskPrincipalParams = @{
+            UserId    = 'NT AUTHORITY\SYSTEM'
+            RunLevel  = 'Highest'
+            Id        = 'Author'
+            LogonType = 'ServiceAccount'
+        }
+
+        Write-Debug -Message ('$NewTaskPrincipalParams: ''{0}''' -f (Out-String -InputObject $NewTaskPrincipalParams))
+        Write-Debug -Message '$NewTaskSettingSetParams: @{ Compatibility = ''Win8''; MultipleInstances = ''IgnoreNew''; DontStopIfGoingOnBatteries = $true; StartWhenAvailable = $true }'
+
+        $NewTaskSettingSetParams = @{
+            Compatibility              = 'Win8'
+            MultipleInstances          = 'IgnoreNew'
+            DontStopIfGoingOnBatteries = $true
+            StartWhenAvailable         = $true
+        }
+
+        Write-Debug -Message ('$NewTaskSettingSetParams: ''{0}''' -f (Out-String -InputObject $NewTaskSettingSetParams))
+        Write-Debug -Message ('$NewScheduledTaskParameters = @{{ Action = New-ScheduledTaskAction @NewTaskActionParams @RemoteCimsessionParams; Principal = New-ScheduledTaskPrincipal @NewTaskPrincipalParams @RemoteCimsessionParams; Settings = New-ScheduledTaskSettingsSet @NewTaskSettingSetParams @RemoteCimsessionParams; Description = ''{0}'' }}' -f $TaskDescription)
+
+        $NewScheduledTaskParameters = @{
+
+            Action      = New-ScheduledTaskAction @NewTaskActionParams @RemoteCimsessionParams
+            Principal   = New-ScheduledTaskPrincipal @NewTaskPrincipalParams @RemoteCimsessionParams
+            Settings    = New-ScheduledTaskSettingsSet @NewTaskSettingSetParams @RemoteCimsessionParams
+            Description = $TaskDescription
+        }
+
+        Write-Debug -Message ('$NewScheduledTaskParameters: ''{0}''' -f (Out-String -InputObject $NewScheduledTaskParameters))
+
+        Write-Debug -Message 'New-ScheduledTask @NewScheduledTaskParameters @RemoteCimsessionParams'
+        $ScheduledTask = New-ScheduledTask @NewScheduledTaskParameters @RemoteCimsessionParams
+        Write-Debug -Message ('$ScheduledTask: ''{0}''' -f (Out-String -InputObject $ScheduledTask))
+
+        Write-Debug -Message ('$null = Register-ScheduledTask -TaskName ''{0}'' -TaskPath ''\'' -InputObject $ScheduledTask @RemoteCimsessionParams' -f $TaskName)
+        $null = Register-ScheduledTask -TaskName $TaskName -TaskPath '\' -InputObject $ScheduledTask @RemoteCimsessionParams
+
+        Write-Debug -Message ('$RegisteredTask = Get-ScheduledTask -TaskName ''{0}'' -CimSession $RemoteCimSession' -f $TaskName)
+        $RegisteredTask = Get-ScheduledTask -TaskName $TaskName -CimSession $RemoteCimSession
+        Write-Debug -Message ('$RegisteredTask: ''{0}''' -f (Out-String -InputObject $RegisteredTask))
+
+        Write-Debug -Message 'Start-ScheduledTask -InputObject $RegisteredTask'
+        Start-ScheduledTask -InputObject $RegisteredTask
 
         Write-Debug -Message '$InitialDateTime = Get-Date'
         $InitialDateTime = Get-Date
         Write-Debug -Message ('$InitialDateTime: ''{0}''' -f [string]$InitialDateTime)
+        Write-Debug -Message 'do while ($RunningTask)'
         do {
             Write-Debug -Message ('Start-Sleep -Seconds {0}' -f $Timeout)
             Start-Sleep -Seconds $Timeout
 
-            Write-Debug -Message ('$RunningTask = $Scheduler.GetRunningTasks(0) | Where-Object {{$_.Name -eq ''{0}''}}' -f $TaskName)
-            $RunningTask = $Scheduler.GetRunningTasks(0) | Where-Object {$_.Name -eq $TaskName}
-            Write-Debug -Message ('$RunningTask: {0}' -f [string]$RunningTask.Name)
+            Write-Debug -Message ('$RunningTask = Get-ScheduledTask -TaskName ''{0}'' -CimSession $RemoteCimSession | Where-Object -FilterScript {{ $_.State.ToString() -eq ''{1}'' }}' -f $TaskName, $ScheduledTaskStateRunning)
+            $RunningTask = Get-ScheduledTask -TaskName $TaskName -CimSession $RemoteCimSession | Where-Object -FilterScript { $_.State.ToString() -eq $ScheduledTaskStateRunning }
+            Write-Debug -Message ('$RunningTask: {0}' -f (Out-String -InputObject $RunningTask))
+            Write-Debug -Message 'if ($RunningTask)'
             if ($RunningTask) {
                 Write-Debug -Message '$CurrentDateTime = Get-Date'
                 $CurrentDateTime = Get-Date
@@ -178,6 +222,12 @@ function Invoke-WindowsUpdate {
             }
         }
         while ($RunningTask)
+
+        Write-Debug -Message 'Unregister-ScheduledTask -InputObject $RegisteredTask -Confirm:$false'
+        Unregister-ScheduledTask -InputObject $RegisteredTask -Confirm:$false
+
+        Write-Debug -Message '$RemoteCimSession.Close()'
+        $RemoteCimSession.Close()
 
         Write-Debug -Message ('EXIT TRY {0}' -f $MyInvocation.MyCommand.Name)
     }
